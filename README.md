@@ -22,7 +22,7 @@ Note: You must supply your own original ROM to be able to apply these patches.
    Example for command line/terminal:
 
    ```
-   bspatch "B.C. Kid (E) [!].gb" patched.gb "B.C. Kid (E) [!].bsdiff"
+   bspatch "B.C. Kid (E) [!].gb" patched.gb "B.C. Kid (E) [!].gb.bsdiff"
    ```
 
 4. Copy the patched ROM to your flash cartridge
