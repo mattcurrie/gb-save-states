@@ -52,3 +52,9 @@ Combo 2: Hold ```Select``` and press ```B```
 Submit an [issue](https://github.com/mattcurrie/gb-save-states/issues) and hopefully someone will create a patch for you.
 
 If you have a bit of Game Boy assembly knowledge then you can create a patch yourself.  Documentation coming soon.
+
+# Limitations
+
+- Game Boy Color games are not currently supported.
+
+- Games that use more than 8KB of battery backed RAM are not currently supported.
