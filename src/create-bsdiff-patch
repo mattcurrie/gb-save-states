@@ -1,0 +1,108 @@
+#!/bin/sh
+
+function abort {
+    echo $1
+    echo "\nAborting..."
+    exit 1
+}
+
+if [[ "$#" -ne 1 ]]; then 
+    me=`basename "$0"`
+    echo "Usage: ./${me} sourcefile"  
+    exit
+fi
+
+sourcefile="${PWD}/$1"
+
+# change cwd to the location of this script
+cd "${0%/*}"
+
+if [[ ! -e "../patched-roms" ]] ; then
+    mkdir ../patched-roms
+fi
+
+if [[ ! -e $sourcefile ]] ; then
+    abort "\"$1\" not found."
+fi
+
+sourcefile_basename=${sourcefile##*/}
+original_rom_filename=${sourcefile_basename%.*}
+original_rom_path="../original-roms/${original_rom_filename}"
+
+if [[ ! -e $original_rom_path ]] ; then
+    abort "Orignal ROM not found in \"${original_rom_path}\"."
+fi
+
+
+# check if the md5 hash of the original rom is correct
+echo "Verifying md5 hash of \"${original_rom_filename}\"..."
+original_rom_md5=`md5 -q "${original_rom_path}"`
+required_md5=`grep md5 "${sourcefile}" | cut -d " " -f 3`
+
+if [[ $original_rom_md5 != $required_md5 ]]; then
+    abort "ROM in original-roms directory has md5 hash ${original_rom_md5}. Require ${required_md5}. Aborting..."
+fi
+
+
+cp "${original_rom_path}" "${original_rom_filename}"
+
+
+# check if the original rom file size needs padding (required for use of wla's .BACKGROUND directive)
+rombanks_directive=(`grep .ROMBANKS "${sourcefile}"`)
+expected_file_size=$((rombanks_directive[1] * 16384))
+actual_file_size=$((`du -k "${original_rom_path}" | cut -f 1` * 1024))
+
+if [[ $actual_file_size -ne $expected_file_size ]]; then
+    echo "Padding ROM to ${expected_file_size} bytes..."
+
+    count=$((expected_file_size/1024))
+
+    # create file of the correct size filled with 0xff bytes
+    dd if=/dev/zero ibs=1024 count=${count} of=padded.gb >& /dev/null
+    perl -pi -e 's/\x00/\xff/g' padded.gb
+
+    # copy the rom on top of the padded file and move it into place
+    dd "if=${original_rom_path}" of=padded.gb conv=notrunc >& /dev/null
+    mv padded.gb "${original_rom_filename}"
+fi
+
+
+echo "Assembling patched ROM..."
+wla-gb -o "patched.o" "${sourcefile}"
+
+if [ $? -ne 0 ]; then
+    rm "${original_rom_filename}"
+    abort "Error occurred assembling patched ROM."
+fi
+
+
+# create linkfile
+cat >linkfile <<EOL
+[objects]
+patched.o
+EOL
+
+echo "Linking patched ROM..."
+wlalink linkfile "patched.gb"
+
+if [ $? -ne 0 ]; then
+    rm patched.o
+    rm linkfile
+    rm "${original_rom_filename}"
+    abort "Error occurred linking patched ROM."
+fi
+
+echo "Creating patch..."
+bsdiff "${original_rom_path}" "patched.gb" "patch.bsdiff"
+
+# move results into place
+cp patch.bsdiff "../patches/${original_rom_filename}.bsdiff"
+mv patched.gb "../patched-roms/${original_rom_filename}"
+
+# clean up
+rm patch.bsdiff
+rm patched.o
+rm linkfile
+rm "${original_rom_filename}"
+
+echo "Done!"
