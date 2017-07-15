@@ -47,4 +47,8 @@ Combo 1: Hold ```Up``` and press ```Start```
 
 Combo 2: Hold ```Select``` and press ```B```
 
+# There isn't a patch for my favourite game!
 
+Submit an [issue](https://github.com/mattcurrie/gb-save-states/issues) and hopefully someone will create a patch for you.
+
+If you have a bit of Game Boy assembly knowledge then you can create a patch yourself.  Documentation coming soon.
