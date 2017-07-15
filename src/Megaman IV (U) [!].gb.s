@@ -52,6 +52,6 @@
 .BANK $01 SLOT 1
 .ORG $3d80
 .SECTION "save/load state" SIZE $280 OVERWRITE
-    .DB "--- XXXXX Save Patch ---"
+    .DB "--- Megaman 4 Save Patch ---"
     .INCLUDE "includes/save_state_includes.s"
 .ENDS
