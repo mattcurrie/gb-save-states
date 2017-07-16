@@ -1,9 +1,10 @@
-;***************************************************************************
+;***************************************************************************;
 ;
-;  Checks if load/save key combinations are pressed on the joypad and invokes save/load game
+; Checks if load/save key combinations are pressed on  the joypad and
+; invokes save/load game
 ;
-; 
 ; Function length: 69 bytes
+;
 ;***************************************************************************
 
 CHECK_FOR_SAVE_OR_LOAD_GAME:

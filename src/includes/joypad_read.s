@@ -1,3 +1,12 @@
+;***************************************************************************
+;
+; Reads the current joypad state
+;
+; OUTPUT:
+; C = current state of the joypad
+;
+;***************************************************************************
+
 relocated_read_from_joypad:
 
     ld a,$20                    

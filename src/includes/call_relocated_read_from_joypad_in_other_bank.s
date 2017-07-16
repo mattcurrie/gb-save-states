@@ -1,3 +1,10 @@
+;***************************************************************************;
+;
+; Calls the relocated_read_from_joypad fuction in a different ROM bank, 
+; restoring the previous ROM bank afterwards.
+;
+;***************************************************************************
+
 .DEFINE interrupts_already_disabled 1
 .DEFINE already_changed_rom_bank 1
 

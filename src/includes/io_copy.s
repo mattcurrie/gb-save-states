@@ -1,13 +1,15 @@
 ;***************************************************************************
 ;
 ; Copies 255 bytes or less into OAM/hi-ram/io area
+;
+; INPUT:
 ; HL = source address
 ; DE = destination address
 ; C = number of bytes to copy
 ; B = dont copy the byte at address "HB"
 ;
-;
 ; Function length: 12 bytes
+;
 ;***************************************************************************
 
 IO_COPY:

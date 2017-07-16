@@ -1,5 +1,11 @@
-.INCLUDE "includes/joypad_read.s"      
+;***************************************************************************
+; 
+; Reads the current joypad state into joypad (and joypad_2/joypad_3 if
+; defined) and then checks if the button combos are pressed
+;
+;***************************************************************************
 
+.INCLUDE "includes/joypad_read.s"      
 
 .IFDEF joypad_2
 

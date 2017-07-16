@@ -1,6 +1,6 @@
 ;***************************************************************************
 ;
-; resets out the internal RAM at startup. Requires a RESET_RAM_DONE label to
+; Resets the internal RAM at startup. Requires a RESET_RAM_DONE label to
 ; be added somewhere.
 ;
 ;***************************************************************************

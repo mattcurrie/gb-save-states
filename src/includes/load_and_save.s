@@ -1,11 +1,11 @@
+;***************************************************************************
 ;
-; Function length: 173 bytes
+; Save or load a game state
+;
 ;***************************************************************************
 
 .IFDEF current_nr34_value
-
-.DEFINE restore_wave_ram 1
-
+    .DEFINE restore_wave_ram 1
 .ENDIF
 
 SAVE_GAME:
@@ -181,7 +181,10 @@ LOAD_GAME:
 
 ;***************************************************************************
 ;
-; Copy data (dont use for OAM or hi-ram area due to OAM CPU bug and DMA transfer)
+; Copy data (dont use for OAM or hi-ram area due to OAM CPU bug and DMA
+; transfer)
+;
+; INPUT:
 ; HL = source address
 ; DE = destination address
 ; BC = number of bytes to copy
@@ -254,6 +257,13 @@ wait_vbl:
 
 
 .IFDEF restore_sound
+
+;***************************************************************************
+;
+; Restore the sound registers that can be read. 
+; Some sound registers are write-only so do not try to restore those.
+;
+;***************************************************************************
 
 RESTORE_SOUND:
 
@@ -354,11 +364,6 @@ RESTORE_SOUND_CONTINUE:
 
 RESTORE_NR_34:
 
-    ; check bit 6 of NR 34
-    ;     0 = Regardless of the length data in NR31
-    ;    sound can be produced consecutively.
-    ;    if reset then enable sound 3
-
     ld a,(io_save + $1A)
     bit 7,a
     ret z
@@ -368,6 +373,11 @@ RESTORE_NR_34:
     ld ($FF00+$1A),a
 
 .IFDEF current_nr34_value
+
+    ; check bit 6 of NR 34
+    ;     0 = Regardless of the length data in NR31
+    ;    sound can be produced consecutively.
+    ;    if reset then enable sound 3
 
     ld a,(io_save + $1E)
     bit 6,a 
@@ -389,6 +399,10 @@ RESTORE_NR_34:
 
 ;***************************************************************************
 ;
+; Copy 8KB of data between two SRAM banks. 
+; TODO: Use WRAM to speed up the copy process.
+;
+; INPUT:
 ; D = source ram bank
 ; E = destination ram bank
 ;
@@ -416,6 +430,7 @@ COPY_BETWEEN_SRAM_BANKS_LOOP:
     ld (hl),c
     inc hl
 
+    ; bit 6 of HL will be set when HL equals $c000
     bit 6,h
     jr z,COPY_BETWEEN_SRAM_BANKS_LOOP
 
