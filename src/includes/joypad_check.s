@@ -103,7 +103,9 @@ start_pressed:
 
     ; check the response code to see if loaded/saved a game 
     ld a,b
-    cp 0
+
+
+    or a    ; cp 0
     jr z,save_or_load_continue
 
     ; clear the joypad state - prevents the game from pausing
