@@ -1,3 +1,4 @@
 *.gb
 *.gbc
 *.sav
+/original-roms/**
