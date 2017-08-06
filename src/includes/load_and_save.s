@@ -62,7 +62,7 @@ SAVE_GAME:
 
 
     ld hl,$C000 ; input
-    ld de,$A000 ; output
+    ld de,$A002 ; output start  - leave space for 2 byte header with compressed data length
     ld bc,$2000 ; input length
 
     push de
@@ -70,18 +70,58 @@ SAVE_GAME:
 
     call PACKBITS_ENCODE
 
+    ; write the header
+    ld a,l
+    ld ($a000),a
+    ld a,h
+    ld ($a001),a
+
     ; pop values out to use them for the RAM_COPY function
     pop bc  ; $2000 length
-    pop de  ; $A000 destination
+    pop de  ; $a002 original output start address
+
+    ; add (hl/$a002) to the output data length. this will be the new output start address
+    ld a,l
+    add e
+    ld e,a
+
+    ld a,h
+    adc d
+    ld d,a
 
 
     ; straight copy of the vram - switch to the correct ram bank
-    ld a,(SAVE_STATE_RAM_BANK_VRAM)
-    ld (ram_bank_select),a
+    ;ld a,(SAVE_STATE_RAM_BANK_VRAM)
+    ;ld (ram_bank_select),a
 
     ld hl,$8000 ; source
 
-    jr RAM_COPY
+    push de
+    call PACKBITS_ENCODE
+    pop de
+
+    ; add data length to original output address to get end of data address
+    ld a,l
+    add e
+    ld e,a
+
+    ld a,h
+    adc d
+    ld d,a    
+
+
+    ; if DE < $be00 then we are successful save so jump to COPYING_DONE
+    ld a,d
+
+    ; .DB $40   ; enable breakpoint to see how much save ram was required in total
+
+    cp $be
+    jp c,COPYING_DONE
+
+    ; otherwise not enough space for the save process. 
+    ; likely have overwritten the game ram so just loop forever...
+stop:
+    jr stop    
 
 
 ;***************************************************************************
@@ -153,7 +193,7 @@ LOAD_GAME:
 
     ; restore the WRAM
 
-    ld hl,$A000 ; source
+    ld hl,$A002 ; source
     ld de,$C000 ; dest
     ld bc,$2000 ; output length
     
@@ -162,54 +202,30 @@ LOAD_GAME:
 
     call PACKBITS_DECODE
 
-    pop bc
-    pop hl
+    pop bc   ; output length
+    pop hl   ; $a002
     
+    ; add the previous data length to $a002, so hl has the correct start address
+    ld a,($a000)
+    add l
+    ld l,a
+
+    ld a,($a001)
+    adc h
+    ld h,a
+
     ; restore the VRAM
 
-    ld a,(SAVE_STATE_RAM_BANK_VRAM)
-    ld (ram_bank_select),a
+    ;ld a,(SAVE_STATE_RAM_BANK_VRAM)
+    ;ld (ram_bank_select),a
 
 
     ld de,$8000 ; dest
 
-
-    ; cannot call this because stack is not available when switching to this bank
-
+    call PACKBITS_DECODE
 
 
-
-;***************************************************************************
-;
-; Copy data (dont use for OAM or hi-ram area due to OAM CPU bug and DMA
-; transfer)
-;
-; INPUT:
-; HL = source address
-; DE = destination address
-; BC = number of bytes to copy
-;
-;***************************************************************************
-
-RAM_COPY:
-    ld a,(hl+)                   
-    ld (de),a                   
-    inc de                      
-
-    dec bc
-    
-    ld a,b
-    or c
-
-    jr nz,RAM_COPY
-
-
-
-RAM_COPY_DONE:
-
-    ; select ram bank (and restore the stack pointer)
-    ld a,(SAVE_STATE_RAM_BANK)
-    ld (ram_bank_select),a
+COPYING_DONE:
 
 .IFDEF restore_wave_ram
     call RESTORE_NR_34
