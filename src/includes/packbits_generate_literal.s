@@ -41,15 +41,17 @@ PACKBITS_ENCODE_UNCOMPRESSED_LOOP:
     cp l
     jr nz,PACKBITS_ENCODE_UNCOMPRESSED_CONTINUE
 
-        pop de    ; restore the current output address
+        ; restore the current output address into HL to
+        ; satisfy PACKBITS_ENCODE_SKIP_FINAL_RUN expectation
+        pop hl    
 
         ; all done, so write the bytes then bail out completely
 
         ; write the current output address from DE into $BFFE
-        ld a,e
+        ld a,l
         ld (PACKBITS_CURRENT_OUTPUT_ADDRESS),a
 
-        ld a,d
+        ld a,h
         ld (PACKBITS_CURRENT_OUTPUT_ADDRESS + 1),a
 
         pop de   ; get the original output address so can write the length
@@ -58,10 +60,7 @@ PACKBITS_ENCODE_UNCOMPRESSED_LOOP:
         dec a
         ld (de),a     ; write the length - 1 byte
 
-        push de
-        pop hl
-
-        pop de    ; restore the end address to DE
+        pop de    ; restore the end of source data address to DE
 
         jr PACKBITS_ENCODE_SKIP_FINAL_RUN
 
@@ -69,7 +68,7 @@ PACKBITS_ENCODE_UNCOMPRESSED_LOOP:
 
 PACKBITS_ENCODE_UNCOMPRESSED_CONTINUE:
 
-    pop de 
+    pop de    ; restore the current output address 
 
 
     ld a, 128
@@ -104,7 +103,7 @@ PACKBITS_ENCODE_STOP_UNCOMPRESSED_OUTPUT_DUPE:
 
 PACKBITS_ENCODE_STOP_UNCOMPRESSED_OUTPUT:
 
-    ; write to the current output address from DE into $BFFE
+    ; write to the current output address from DE
     ld a,e
     ld (PACKBITS_CURRENT_OUTPUT_ADDRESS),a
 
@@ -119,7 +118,7 @@ PACKBITS_ENCODE_STOP_UNCOMPRESSED_OUTPUT:
 
 
 
-    pop de    ; restore the end address to DE
+    pop de    ; restore the end of source address to DE
 
     
 
