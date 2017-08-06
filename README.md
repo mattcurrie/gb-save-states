@@ -1,10 +1,12 @@
 # gb-save-states
 Patches to add save state support to Game Boy games when playing on the original hardware.
 
-Note: You must supply your own original ROM to be able to apply these patches.
-
 # How to use
 
+## Requirements
+
+- Flash cart that supports 32KB of save RAM and MBC 1/5 mapper.
+- Original ROM file for the game.
 
 ## Setup
 
@@ -55,6 +57,7 @@ If you have a bit of Game Boy assembly knowledge then you can create a patch you
 
 # Limitations
 
-- Game Boy Color games are not currently supported.
+The patches are currently written to target a flash cart with 32KB of save RAM, so there are the following limitations:
 
-- Games that use more than 8KB of battery backed RAM are not currently supported.
+- Game Boy Color games are not supported.
+- Games that originally use more than 8KB of battery backed RAM are not currently supported.
