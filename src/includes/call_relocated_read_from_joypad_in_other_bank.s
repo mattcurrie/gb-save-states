@@ -9,15 +9,22 @@
 .DEFINE already_changed_rom_bank 1
 
 
+invoke_relocated_read_from_joypad_in_other_bank:
+
+
 .IFDEF preserve_register_a
     ld b,a
 .ENDIF
 
+
+.IFNDEF calling_from_vblank
     ; disable interrupts
     ld a,($ff00+$ff)   
     push af            
     xor a              
     ld ($ff00+$ff),a   
+.ENDIF
+
 
     ; save current ROM bank
     ld a,(current_rom_bank)
@@ -37,6 +44,9 @@
     ld ($2000),a
 
 
+.IFNDEF calling_from_vblank
     ; enable interrupts
     pop af
     ld ($ff00+$ff),a
+.ENDIF
+

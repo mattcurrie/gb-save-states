@@ -24,9 +24,8 @@
 .BANK $00 SLOT 0
 .ORG $00b0
 .SECTION "call relocated read from joypad" SIZE $30 OVERWRITE
-    call_relocated_read_from_joypad_in_other_bank:
-        .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.s"
-        ret
+    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.s"
+    ret
 .ENDS
 
 
@@ -37,7 +36,7 @@
 .BANK $01 SLOT 1
 .ORG $3112
 .SECTION "joypad read" SIZE 4 OVERWRITE   
-    call call_relocated_read_from_joypad_in_other_bank
+    call invoke_relocated_read_from_joypad_in_other_bank
     nop
 .ENDS
 
