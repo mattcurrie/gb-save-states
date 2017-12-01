@@ -57,6 +57,8 @@ If you have a bit of Game Boy assembly knowledge then you can create a patch you
 
 # Limitations
 
+- Sound/Music cannot always be restored 100% due to some sound registers being read only. This generally isn't a problem unless loading a save game from the startup menu instead of during gameplay.  Pausing and resuming the game can sometimes resolve any sound problems.
+
 The patches are currently written to target a flash cart with 32KB of save RAM, so there are the following limitations:
 
 - Game Boy Color games are not supported.
