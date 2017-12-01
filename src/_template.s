@@ -23,19 +23,19 @@
 .ORG $0080
 .SECTION "relocated read from joypad" SIZE $70 OVERWRITE
     .INCLUDE "includes/relocated_read_from_joypad.s"
-    .INCLUDE "includes/zero_ram.s"
+    .INCLUDE "includes/reset_ram.s"
 .ENDS
 
 
-;************
-;* zero ram *
-;************
+;*************
+;* reset ram *
+;*************
 
-.DEFINE ZERO_RAM_DONE $0150
+.DEFINE RESET_RAM_DONE $0150
 .BANK $00 SLOT 0
 .ORG $0101
-.SECTION "zero ram jump" SIZE 3 OVERWRITE
-    jp ZERO_RAM
+.SECTION "reset ram jump" SIZE 3 OVERWRITE
+    jp RESET_RAM
 .ENDS
 
 
