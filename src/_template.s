@@ -1,8 +1,8 @@
-; md5 XXXXXXXXXXXXXXXXXXXXXX
+; md5 insert-md5-hash
 
 .INCLUDE "includes/init.s"
-.ROMBANKS zzzzzzzzzz
-.BACKGROUND "aaaaaaaaaaaaaaaaaaa"
+.ROMBANKS insert-number-of-banks
+.BACKGROUND "insert-rom-file-name"
 .INCLUDE "includes/header.s"
 
 

@@ -1,0 +1,56 @@
+#!/bin/sh
+
+original_roms_dir="../original-roms"
+
+function abort {
+    echo $1
+    echo "\nAborting..."
+    exit 1
+}
+
+if [[ "$#" -ne 1 ]]; then 
+    me=`basename "$0"`
+    echo "Usage: ./${me} rom"  
+    exit
+fi
+
+rom_path="$1"
+
+# change cwd to the location of this script
+cd "${0%/*}"
+
+if [[ ! -e $rom_path ]] ; then
+    abort "\"$1\" not found."
+fi
+
+if [[ ! -d $original_roms_dir ]] ; then
+    echo "Creating original-roms directory..."
+    mkdir "${original_roms_dir}"
+fi
+
+rom_basename=${rom_path##*/}
+original_rom_path="${original_roms_dir}/${rom_basename}"
+sourcefile="${rom_basename}.s"
+
+if [[ -e $sourcefile ]] ; then
+    abort "${sourcefile} already exists."
+fi
+
+if [[ ! -e $original_rom_path ]] ; then
+    echo "Copying ROM to original-roms directory..."
+    cp "${romfile}" "${original_rom_path}"
+else 
+    echo "ROM found in original-roms directory"
+fi
+
+original_rom_md5=`md5 -q "${original_rom_path}"`
+echo "MD5 hash is ${original_rom_md5}"
+
+rom_banks=$((`du -k "${original_rom_path}" | cut -f 1` / 16))
+echo "ROM has ${rom_banks} banks"
+
+echo "Generating \"${sourcefile}\"..."
+cat _template.s | sed "s/insert-rom-file-name/${rom_basename}/" | sed "s/insert-md5-hash/${original_rom_md5}/" | sed "s/insert-number-of-banks/${rom_banks}/" > "${sourcefile}"
+
+
+echo "Done!"
