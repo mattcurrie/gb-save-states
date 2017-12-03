@@ -56,6 +56,19 @@ The process below is for a standard game.  Some games might be a bit more compli
 
 9. Locate about 64 ($40) bytes of free space in bank 0 of the ROM for the "relocated read from joypad" section. Update the .ORG directive (and SIZE if necessary). There is often space between $0080 and $0100, so the template locates the "relocated read from joypad" at $0080 by default.
 
+   If there isn't space available in bank 0 and the game uses a standard joypad read function, then you can overwrite the joypad function with a call to our own joypad read function in a different bank. The .ORG value from step 8 and SIZE will need to be updated to point to the start of the original joypad read function and the size of the original joypad read function.  Change the joypad read section to do this:
+
+   ```
+   .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.s"
+   ret
+   ```
+
+   and then add the joypad read and check into save/load state section:
+
+   ```.INCLUDE "includes/joypad_read_and_check.s"```
+
+   See the Speedball 2 patch for an example.
+
 10. Locate approx 544 ($220) bytes of free space in the ROM.  Its usually easiest to do this in a hex editor. Then update the .BANK, .ORG, and .SECTION size defines in the save/load state section. 
 
     The .BANK value = ```(the start address of the free space in the ROM file) / $4000```
