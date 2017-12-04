@@ -89,13 +89,19 @@ The process below is for a standard game.  Some games might be a bit more compli
 
     Games that already use 32 KB of SRAM are not currently supported.
 
-12. Run the script to create the patch from the ```/src``` directory.
+12. If the game uses MBC5, then add this define in the config section:
+
+    ```
+    .DEFINE uses_mbc5 1
+    ```
+
+13. Run the script to create the patch from the ```/src``` directory.
 
     e.g. ```./create-bsdiff-patch game.gb.s```
 
 	  The patched ROM will be stored in the ```/patched-roms``` directory and the .bsdiff patch file will be stored in the ```/patches``` directory.
 
-13. Check if the game uses the wave pattern RAM by loading up the game in BGB and then save a game state during gameplay.  Then reset the emulator and try to load up the save state as soon as possible after booting.  If the sound/music sounds strange then it is likely due to the wave pattern RAM not being saved.  
+14. Check if the game uses the wave pattern RAM by loading up the game in BGB and then save a game state during gameplay.  Then reset the emulator and try to load up the save state as soon as possible after booting.  If the sound/music sounds strange then it is likely due to the wave pattern RAM not being saved.  
 
     Making the wave pattern RAM readable requires disabling the third sound channel, so the third sound channel needs to be enabled again after saving/loading a save state.  This is done through the NR 34 sound register located at ```$FF1E```.  
 
