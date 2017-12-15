@@ -90,21 +90,24 @@ start_pressed:
 
 
 
-            ; store the response code for later
-            ld b,a
 
 .IFDEF current_rom_bank
 .IFNDEF already_changed_rom_bank
+
+        ; store the response code for later
+        ld b,a
+
         ; restore previous ROM bank
         pop af
         ld ($2000),a
+
+        ; restore the response code
+        ld a,b
 .ENDIF
 .ENDIF
+
 
     ; check the response code to see if loaded/saved a game 
-    ld a,b
-
-
     or a    ; cp 0
     jr z,save_or_load_continue
 

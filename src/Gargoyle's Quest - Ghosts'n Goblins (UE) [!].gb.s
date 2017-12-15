@@ -19,9 +19,9 @@
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
+.BANK $0000 SLOT 0
 .ORG $0b31
-.SECTION "joypad read" SIZE $30 OVERWRITE   
+.SECTION "joypad read" SIZE $20 OVERWRITE
     .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.s"
     ret
 .ENDS
@@ -31,10 +31,13 @@
 ;* save/load state *
 ;*******************
 
-.BANK $8 SLOT 1
-.ORG $0
-.SECTION "save/load state" SIZE $4000 OVERWRITE
-    .DB "--- Gargoyle's Quest Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.s"    
+.BANK $0008 SLOT 1
+.ORG $0000
+.SECTION "save/load state" SIZE $02a0 OVERWRITE
+    .DB "--- Save Patch ---"
+    .INCLUDE "includes/joypad_read_and_check.s"
     .INCLUDE "includes/save_state_includes.s"
 .ENDS
+
+
+; Generated with patch-builder.py

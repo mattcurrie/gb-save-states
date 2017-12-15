@@ -15,23 +15,18 @@
 .DEFINE current_rom_bank $d104
 
 
-;*************************
-;* relocated joypad read *
-;*************************
-
-.BANK $00 SLOT 0
-.ORG $0080
-.SECTION "reset ram" SIZE $70 OVERWRITE
-    .INCLUDE "includes/reset_ram.s"
-.ENDS
-
-
 ;*************
 ;* reset ram *
 ;*************
 
 .DEFINE RESET_RAM_DONE $0150
-.BANK $00 SLOT 0
+.BANK $0000 SLOT 0
+
+.ORG $00a1
+.SECTION "reset ram" SIZE $F OVERWRITE
+    .INCLUDE "includes/reset_ram.s"
+.ENDS
+
 .ORG $0101
 .SECTION "reset ram jump" SIZE 3 OVERWRITE
     jp RESET_RAM
@@ -42,11 +37,16 @@
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $236
-.SECTION "joypad read" SIZE $30 OVERWRITE   
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.s"
-    ret
+.BANK $0000 SLOT 0
+.ORG $0061
+.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
+    .INCLUDE "includes/relocated_read_from_joypad.s"
+.ENDS
+
+.ORG $026b
+.SECTION "joypad read" SIZE 4 OVERWRITE
+    call relocated_read_from_joypad
+    nop
 .ENDS
 
 
@@ -54,10 +54,12 @@
 ;* save/load state *
 ;*******************
 
-.BANK $02 SLOT 1
-.ORG $3d00
-.SECTION "save/load state" SIZE $300 OVERWRITE
-    .DB "--- Terminator 2 Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.s"
+.BANK $0002 SLOT 1
+.ORG $3c89
+.SECTION "save/load state" SIZE $0220 OVERWRITE
+    .DB "--- Save Patch ---"
     .INCLUDE "includes/save_state_includes.s"
 .ENDS
+
+
+; Generated with patch-builder.py

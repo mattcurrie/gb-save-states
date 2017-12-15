@@ -2,7 +2,7 @@
 
 .INCLUDE "includes/init.s"
 .ROMBANKS 32
-.BACKGROUND "Aladdin (U) [S][!].gb" 
+.BACKGROUND "Aladdin (U) [S][!].gb"
 .INCLUDE "includes/header.s"
 
 
@@ -14,15 +14,21 @@
 .DEFINE current_rom_bank $ddfa
 
 
-;*************************
-;* relocated joypad read *
-;*************************
+;*************
+;* reset ram *
+;*************
 
-.BANK $00 SLOT 0
-.ORG $0061
-.SECTION "relocated read from joypad" SIZE $80 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.s"
-    ret
+.DEFINE RESET_RAM_DONE $01da
+.BANK $0000 SLOT 0
+
+.ORG $0059
+.SECTION "reset ram" SIZE $F OVERWRITE
+    .INCLUDE "includes/reset_ram.s"
+.ENDS
+
+.ORG $0101
+.SECTION "reset ram jump" SIZE 3 OVERWRITE
+    jp RESET_RAM
 .ENDS
 
 
@@ -30,7 +36,12 @@
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
+.BANK $0000 SLOT 0
+.ORG $0000
+.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
+    .INCLUDE "includes/relocated_read_from_joypad.s"
+.ENDS
+
 .ORG $04ae
 .SECTION "joypad read" SIZE 4 OVERWRITE
     call relocated_read_from_joypad
@@ -42,9 +53,12 @@
 ;* save/load state *
 ;*******************
 
-.BANK $10 SLOT 1
-.ORG 0
-.SECTION "save/load state" SIZE $4000 OVERWRITE
-    .DB "--- Aladdin Save Patch ---"
+.BANK $0010 SLOT 1
+.ORG $0000
+.SECTION "save/load state" SIZE $220 OVERWRITE
+    .DB "--- Save Patch ---"
     .INCLUDE "includes/save_state_includes.s"
 .ENDS
+
+
+; Generated with patch-builder.py

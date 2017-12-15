@@ -14,13 +14,31 @@
 .DEFINE current_rom_bank $ffaa
 
 
+;*************
+;* reset ram *
+;*************
+
+.DEFINE RESET_RAM_DONE $0150
+.BANK $0000 SLOT 0
+
+.ORG $0061
+.SECTION "reset ram" SIZE $F OVERWRITE
+    .INCLUDE "includes/reset_ram.s"
+.ENDS
+
+.ORG $0101
+.SECTION "reset ram jump" SIZE 3 OVERWRITE
+    jp RESET_RAM
+.ENDS
+
+
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
+.BANK $0000 SLOT 0
 .ORG $0475
-.SECTION "joypad read" SIZE $28 OVERWRITE   
+.SECTION "joypad read" SIZE $20 OVERWRITE
     .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.s"
     jp $049d
 .ENDS
@@ -30,10 +48,13 @@
 ;* save/load state *
 ;*******************
 
-.BANK $10 SLOT 1
-.ORG $0
-.SECTION "save/load state" SIZE $4000 OVERWRITE
-    .DB "--- Noobow Save Patch ---"
+.BANK $0010 SLOT 1
+.ORG $0000
+.SECTION "save/load state" SIZE $02a0 OVERWRITE
+    .DB "--- Save Patch ---"
     .INCLUDE "includes/joypad_read_and_check.s"
     .INCLUDE "includes/save_state_includes.s"
 .ENDS
+
+
+; Generated with patch-builder.py
