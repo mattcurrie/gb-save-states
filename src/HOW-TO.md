@@ -52,6 +52,12 @@ The process below is for a standard game.  Some games might be a bit more compli
     .DEFINE swap_joypad 1
     ```
 
+    Some games don't do ```cpl``` on the joypad value, if so add this to the config section:
+
+    ```
+    .DEFINE cpl_joypad 1
+    ```
+
 8. Also in the joypad read routine it usually does ```ld a, $30 | ldh ($00),a | ret```. Locate the start address of these instructions, and set the .ORG directive in the "joypad read" section to the address of the ```ld a, $30``` instruction.
 
 9. Locate about 64 ($40) bytes of free space in bank 0 of the ROM for the "relocated read from joypad" section. Update the .ORG directive (and SIZE if necessary). There is often space between $0080 and $0100, so the template locates the "relocated read from joypad" at $0080 by default.
