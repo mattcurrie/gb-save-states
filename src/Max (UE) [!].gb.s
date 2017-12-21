@@ -1,8 +1,8 @@
-; md5 91128778a332495f77699eaf3a37fe30
+; md5 660a98b774e7d136e302dfe6557405e9
 
 .INCLUDE "includes/init.s"
-.ROMBANKS 2
-.BACKGROUND "Alleyway (W) [!].gb"
+.ROMBANKS 8
+.BACKGROUND "Max (UE) [!].gb"
 .INCLUDE "includes/header.s"
 
 
@@ -10,7 +10,7 @@
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $01a7
+.DEFINE current_rom_bank $c0a0
 
 
 ;*************
@@ -20,7 +20,7 @@
 .DEFINE RESET_RAM_DONE $0150
 .BANK $0000 SLOT 0
 
-.ORG $00a3
+.ORG $0026
 .SECTION "reset ram" SIZE $F OVERWRITE
     .INCLUDE "includes/reset_ram.s"
 .ENDS
@@ -35,19 +35,14 @@
 ;* joypad *
 ;**********
 
-.DEFINE joypad $ff8c
-.DEFINE cpl_joypad 1
+.DEFINE joypad $c136
+.DEFINE joypad_2 $c137
 
 .BANK $0000 SLOT 0
-.ORG $0062
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.s"
-.ENDS
-
-.ORG $03fb
-.SECTION "joypad read" SIZE 4 OVERWRITE
-    call relocated_read_from_joypad
-    nop
+.ORG $138a
+.SECTION "joypad read" SIZE $20 OVERWRITE
+    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.s"
+    jp $13c1
 .ENDS
 
 
@@ -55,10 +50,11 @@
 ;* save/load state *
 ;*******************
 
-.BANK $0001 SLOT 1
-.ORG $0de5
-.SECTION "save/load state" SIZE $0220 OVERWRITE
+.BANK $0004 SLOT 1
+.ORG $0000
+.SECTION "save/load state" SIZE $02a0 OVERWRITE
     .DB "--- Save Patch ---"
+    .INCLUDE "includes/joypad_read_and_check.s"
     .INCLUDE "includes/save_state_includes.s"
 .ENDS
 

@@ -1,8 +1,8 @@
-; md5 91128778a332495f77699eaf3a37fe30
+; md5 ebd1866dc6c13ca48f45538ed33ea46f
 
 .INCLUDE "includes/init.s"
-.ROMBANKS 2
-.BACKGROUND "Alleyway (W) [!].gb"
+.ROMBANKS 8
+.BACKGROUND "Rolan's Curse (U) [!].gb"
 .INCLUDE "includes/header.s"
 
 
@@ -10,7 +10,7 @@
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $01a7
+.DEFINE current_rom_bank $ff8e
 
 
 ;*************
@@ -35,8 +35,8 @@
 ;* joypad *
 ;**********
 
-.DEFINE joypad $ff8c
-.DEFINE cpl_joypad 1
+.DEFINE joypad $c13e
+.DEFINE joypad_2 $c13d
 
 .BANK $0000 SLOT 0
 .ORG $0062
@@ -44,7 +44,7 @@
     .INCLUDE "includes/relocated_read_from_joypad.s"
 .ENDS
 
-.ORG $03fb
+.ORG $0a30
 .SECTION "joypad read" SIZE 4 OVERWRITE
     call relocated_read_from_joypad
     nop
@@ -55,8 +55,8 @@
 ;* save/load state *
 ;*******************
 
-.BANK $0001 SLOT 1
-.ORG $0de5
+.BANK $0004 SLOT 1
+.ORG $0000
 .SECTION "save/load state" SIZE $0220 OVERWRITE
     .DB "--- Save Patch ---"
     .INCLUDE "includes/save_state_includes.s"

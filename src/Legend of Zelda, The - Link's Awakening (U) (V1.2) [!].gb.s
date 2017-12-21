@@ -1,8 +1,8 @@
-; md5 91128778a332495f77699eaf3a37fe30
+; md5 69d643bf4e37b3c133518517338b6a1c
 
 .INCLUDE "includes/init.s"
-.ROMBANKS 2
-.BACKGROUND "Alleyway (W) [!].gb"
+.ROMBANKS 32
+.BACKGROUND "Legend of Zelda, The - Link's Awakening (U) (V1.2) [!].gb"
 .INCLUDE "includes/header.s"
 
 
@@ -10,7 +10,8 @@
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $01a7
+.DEFINE current_rom_bank $dbaf
+.DEFINE game_uses_save_ram 1
 
 
 ;*************
@@ -20,7 +21,7 @@
 .DEFINE RESET_RAM_DONE $0150
 .BANK $0000 SLOT 0
 
-.ORG $00a3
+.ORG $00d3
 .SECTION "reset ram" SIZE $F OVERWRITE
     .INCLUDE "includes/reset_ram.s"
 .ENDS
@@ -35,16 +36,17 @@
 ;* joypad *
 ;**********
 
-.DEFINE joypad $ff8c
-.DEFINE cpl_joypad 1
+.DEFINE joypad $ffcb
+.DEFINE joypad_2 $ffcc
+.DEFINE swap_joypad 1
 
 .BANK $0000 SLOT 0
-.ORG $0062
+.ORG $0092
 .SECTION "relocated read from joypad" SIZE $40 OVERWRITE
     .INCLUDE "includes/relocated_read_from_joypad.s"
 .ENDS
 
-.ORG $03fb
+.ORG $2834
 .SECTION "joypad read" SIZE 4 OVERWRITE
     call relocated_read_from_joypad
     nop
@@ -55,9 +57,9 @@
 ;* save/load state *
 ;*******************
 
-.BANK $0001 SLOT 1
-.ORG $0de5
-.SECTION "save/load state" SIZE $0220 OVERWRITE
+.BANK $0008 SLOT 1
+.ORG $3d04
+.SECTION "save/load state" SIZE $0245 OVERWRITE
     .DB "--- Save Patch ---"
     .INCLUDE "includes/save_state_includes.s"
 .ENDS

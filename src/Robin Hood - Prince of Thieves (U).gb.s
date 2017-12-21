@@ -1,8 +1,8 @@
-; md5 91128778a332495f77699eaf3a37fe30
+; md5 2815ff13131712bcd00c3852d461b414
 
 .INCLUDE "includes/init.s"
-.ROMBANKS 2
-.BACKGROUND "Alleyway (W) [!].gb"
+.ROMBANKS 16
+.BACKGROUND "Robin Hood - Prince of Thieves (U).gb"
 .INCLUDE "includes/header.s"
 
 
@@ -10,17 +10,17 @@
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $01a7
+.DEFINE current_rom_bank $fffe
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0150
+.DEFINE RESET_RAM_DONE $0070
 .BANK $0000 SLOT 0
 
-.ORG $00a3
+.ORG $0029
 .SECTION "reset ram" SIZE $F OVERWRITE
     .INCLUDE "includes/reset_ram.s"
 .ENDS
@@ -35,19 +35,14 @@
 ;* joypad *
 ;**********
 
-.DEFINE joypad $ff8c
-.DEFINE cpl_joypad 1
+.DEFINE joypad $d053
+.DEFINE joypad_2 $d054
 
 .BANK $0000 SLOT 0
-.ORG $0062
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.s"
-.ENDS
-
-.ORG $03fb
-.SECTION "joypad read" SIZE 4 OVERWRITE
-    call relocated_read_from_joypad
-    nop
+.ORG $0e8d
+.SECTION "joypad read" SIZE $20 OVERWRITE
+    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.s"
+    jp $0ec1
 .ENDS
 
 
@@ -55,10 +50,11 @@
 ;* save/load state *
 ;*******************
 
-.BANK $0001 SLOT 1
-.ORG $0de5
-.SECTION "save/load state" SIZE $0220 OVERWRITE
+.BANK $0003 SLOT 1
+.ORG $3339
+.SECTION "save/load state" SIZE $02a0 OVERWRITE
     .DB "--- Save Patch ---"
+    .INCLUDE "includes/joypad_read_and_check.s"
     .INCLUDE "includes/save_state_includes.s"
 .ENDS
 

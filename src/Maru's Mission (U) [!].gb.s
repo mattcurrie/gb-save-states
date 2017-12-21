@@ -1,8 +1,8 @@
-; md5 91128778a332495f77699eaf3a37fe30
+; md5 7f26dd90f8e80b52ead8fc0e3609d4f2
 
 .INCLUDE "includes/init.s"
-.ROMBANKS 2
-.BACKGROUND "Alleyway (W) [!].gb"
+.ROMBANKS 8
+.BACKGROUND "Maru's Mission (U) [!].gb"
 .INCLUDE "includes/header.s"
 
 
@@ -10,7 +10,7 @@
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $01a7
+.DEFINE current_rom_bank $4000
 
 
 ;*************
@@ -35,8 +35,9 @@
 ;* joypad *
 ;**********
 
-.DEFINE joypad $ff8c
-.DEFINE cpl_joypad 1
+.DEFINE joypad $ff8f
+.DEFINE joypad_2 $ff8e
+.DEFINE joypad_3 $ff8d
 
 .BANK $0000 SLOT 0
 .ORG $0062
@@ -44,7 +45,7 @@
     .INCLUDE "includes/relocated_read_from_joypad.s"
 .ENDS
 
-.ORG $03fb
+.ORG $2d2d
 .SECTION "joypad read" SIZE 4 OVERWRITE
     call relocated_read_from_joypad
     nop
@@ -56,7 +57,7 @@
 ;*******************
 
 .BANK $0001 SLOT 1
-.ORG $0de5
+.ORG $3adc
 .SECTION "save/load state" SIZE $0220 OVERWRITE
     .DB "--- Save Patch ---"
     .INCLUDE "includes/save_state_includes.s"
