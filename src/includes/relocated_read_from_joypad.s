@@ -44,4 +44,6 @@ relocated_read_from_joypad:
 
 .INCLUDE "includes/joypad_check.s"
 
+    ret
+
 relocated_read_from_joypad_end:

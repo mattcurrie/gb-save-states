@@ -42,11 +42,7 @@ joypad_check:
 
     and $0c                     ; check start or select is pressed
 
-.IFNDEF preserve_registers 
-    ret z
-.ELSE
-    jr z, restore_registers
-.ENDIF
+    jr z, joypad_check_end
 
 
 start_pressed:
@@ -141,6 +137,7 @@ save_or_load_continue:
     ld ($ff00+$ff),a   
 .ENDIF
 
+joypad_check_end:
 
 .IFDEF preserve_registers
 restore_registers:
@@ -150,6 +147,5 @@ restore_registers:
     pop af
 .ENDIF
 
-    ret
 
 start_pressed_end:

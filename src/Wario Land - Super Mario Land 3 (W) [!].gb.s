@@ -66,10 +66,12 @@ resume:
 .SECTION "save/load state" SIZE $600 OVERWRITE
     .DB "--- Wario Land Save Patch ---"
 
+relocated_read_from_joypad:
     .INCLUDE "includes/joypad_read.s"
     ret
 
     .INCLUDE "includes/joypad_check.s"
+    ret
 
     .INCLUDE "includes/save_state_includes.s"
 .ENDS
