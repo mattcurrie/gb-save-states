@@ -39,6 +39,21 @@
 .ENDS
 
 
+;*********************************
+;* remap title screen key combos *
+;*********************************
+
+.BANK $06 SLOT 1
+.ORG $0083
+.SECTION "configuration mode" SIZE 1 OVERWRITE   
+    .DB $82  ; use "down + b" instead of "select + down + b"
+.ENDS
+.ORG $0088
+.SECTION "extra game" SIZE 1 OVERWRITE   
+    .DB $41  ; use "up + a" instead of "select + up + a"
+.ENDS
+
+
 ;*******************
 ;* save/load state *
 ;*******************

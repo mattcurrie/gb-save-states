@@ -63,3 +63,7 @@ The patches are currently written to target a flash cart with 32KB of save RAM, 
 
 - Game Boy Color games are not supported.
 - Games that originally use more than 8KB of battery backed RAM are not currently supported.
+
+# Notes
+
+- Kirby's Dream Land uses `Select + Down + B` and `Select + Up + A` to access hidden features on the title screen. To avoid conflicts with the save/load combos, these hidden feature combos have been remapped to `Down + B` and `Up + A`.
