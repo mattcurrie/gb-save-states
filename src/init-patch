@@ -38,7 +38,7 @@ fi
 
 if [[ ! -e $original_rom_path ]] ; then
     echo "Copying ROM to original-roms directory..."
-    cp "${romfile}" "${original_rom_path}"
+    cp "${rom_path}" "${original_rom_path}"
 else 
     echo "ROM found in original-roms directory"
 fi
