@@ -7,7 +7,13 @@
 .ENDIF
 
 
+.IFDEF is_cgb
+; CGB requires 128 KB
+.RAMSIZE 4
+.ELSE
 .RAMSIZE 3
+.ENDIF
+
 .COMPUTECHECKSUM
 .COMPUTECOMPLEMENTCHECK
 
@@ -17,13 +23,18 @@
 .DEFINE ram_bank_select $4000
 
 .DEFINE vram_save $A000
-.DEFINE io_save $BE00
+
+.DEFINE bg_color_pal_save $BD00
+.DEFINE obj_color_pal_save $BD40
+
+.DEFINE io_save $BE00               ; must be 256 byte aligned
 
 ; 160 bytes
-.DEFINE oam_save $BF00
+.DEFINE oam_save $BF00              ; must be 256 byte aligned
 
 
 
+.DEFINE internal_stack_pointer_save $BFDE
 .DEFINE stack_pointer_save $BFE0
 .DEFINE magic_byte_save $BFE2
 
@@ -39,18 +50,39 @@
 .DEFINE magic_byte_value $69
 
 
-RAM_SHARING_MAGIC_BYTES:
-.DB "SRAM_CFG"
+.IFDEF is_cgb
+    ; this is where we put the working stack for the save state,
+    ; and any I/O register values, colour palettes, etc
+    SAVE_STATE_RAM_BANK:
+    .DB 4
 
+.DEFINE save_state_vram_bank_0 5
+.DEFINE save_state_vram_bank_1 6
+.DEFINE save_state_wram_bank_01 7
+.DEFINE save_state_wram_bank_23 8
+.DEFINE save_state_wram_bank_45 9
+.DEFINE save_state_wram_bank_67 10
+
+    SAVE_STATE_SRAM_BANK_0:
+    .DB 11
+
+.DEFINE save_state_sram_bank_1 12
+.DEFINE save_state_sram_bank_2 13
+.DEFINE save_state_sram_bank_3 14
+
+.ELSE
+    RAM_SHARING_MAGIC_BYTES:
+    .DB "SRAM_CFG"
 
 .IFDEF game_uses_save_ram
+
     NUMBER_OF_BANKS:
     .DB 4
 
     GAME_SRAM:
     .DB 0
 
-    SAVE_STATE_RAM_BANK_SRAM:
+    SAVE_STATE_SRAM_BANK_0:
     .DB 1
 
 .ELSE
@@ -64,7 +96,7 @@ RAM_SHARING_MAGIC_BYTES:
     SAVE_STATE_RAM_BANK:
     .DB 3
 
+    SAVE_STATE_PATCH_MAGIC_BYTES:
+    .DB "SSPMB"
+.ENDIF
 
-
-SAVE_STATE_PATCH_MAGIC_BYTES:
-.DB "SSPMB"

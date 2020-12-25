@@ -51,13 +51,17 @@ relocated_read_from_joypad:
 
 .IFDEF calling_from_vblank
 
-    xor a  
-
     .IFDEF game_uses_save_ram
-        ; restore bank 0
+        ; restore sram bank
+        .IFDEF current_sram_bank
+            ld a, (current_sram_bank)
+        .ELSE
+            xor a
+        .ENDIF
         ld (ram_bank_select),a
     .ELSE
         ; lock access to ram bank
+        xor a  
         ld (ram_access_toggle),a
     .ENDIF
 

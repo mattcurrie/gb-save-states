@@ -1,11 +1,14 @@
 # gb-save-states
-Patches to add save state support to Game Boy games when playing on the original hardware.
+Patches to add save state support to Game Boy and Game Boy Color games when playing on the original hardware.
 
 # How to use
 
 ## Requirements
 
-- Flash cart that supports 32KB of save RAM and MBC 1/5 mapper
+- For Game Boy games:
+   - Flash cart that supports 32KB of save RAM and MBC 1/5 mapper
+- For Game Boy Color games, and Game Boy games that originally include save RAM:
+   - Flash cart that supports 128KB of save RAM and MBC 5 mapper, e.g. EZ Flash Jr. or EverDrive-GB X3/X5/X7
 - Original ROM file for the game
 - Patching software that supports bsdiff patches:
 
@@ -58,11 +61,6 @@ If you have a bit of Game Boy assembly knowledge then you can create a patch you
 # Limitations
 
 - Sound/Music cannot always be restored 100% due to some sound registers being read only. This generally isn't a problem unless loading a save game from the startup menu instead of during gameplay.  Pausing and resuming the game can sometimes resolve any sound problems.
-
-The patches are currently written to target a flash cart with 32KB of save RAM, so there are the following limitations:
-
-- Game Boy Color games are not supported.
-- Games that originally use more than 8KB of battery backed RAM are not currently supported.
 
 # Notes
 

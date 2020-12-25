@@ -4,27 +4,19 @@
 ;
 ; INPUT:
 ; HL = source address
-; DE = destination address
+; D = destination address high byte
 ; C = number of bytes to copy
-; B = dont copy the byte at address "HB"
 ;
-; Function length: 12 bytes
+; Function length: 8 bytes
 ;
 ;***************************************************************************
 
 IO_COPY:
-    ld a,e
-    cp b                  ; if e == b then dont copy that byte. Used to avoid initiating a DMA transfer
-    jr z,IO_COPY_SKIP
-
-    ld a,(hl)                   
-    ld (de),a                   
-IO_COPY_SKIP:
-
-    inc l                       
+    ld e, l
+io_copy_loop:
+    ld a, (hl+)
+    ld (de), a
     inc e                       
-
     dec c
-    jr nz,IO_COPY
-
+    jr nz, io_copy_loop
     ret

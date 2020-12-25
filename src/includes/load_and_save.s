@@ -19,22 +19,21 @@ SAVE_GAME:
 
 .IFDEF game_uses_save_ram
 
-    ; source is always bank 0
-    ld d,0
-    
-    ld a,(SAVE_STATE_RAM_BANK_SRAM)
+    ld d,0    
+    ld a,(SAVE_STATE_SRAM_BANK_0)
     ld e,a
-
     call COPY_BETWEEN_SRAM_BANKS
 
+.IFDEF current_sram_bank
+    ld de, (1 << 8) | save_state_sram_bank_1
+    call COPY_BETWEEN_SRAM_BANKS
+    ld de, (2 << 8) | save_state_sram_bank_2
+    call COPY_BETWEEN_SRAM_BANKS
+    ld de, (3 << 8) | save_state_sram_bank_3
+    call COPY_BETWEEN_SRAM_BANKS
 .ENDIF
 
-
-    ; copy low registers and sound registers
-    ld hl,$FF00     ; source
-    ld de,io_save   ; dest
-    ld bc,$4630     ; length and ignore address
-    call IO_COPY
+.ENDIF
 
 .IFDEF restore_wave_ram
     ; disable sound 3 using NR30 register before reading sound wave ram
@@ -42,25 +41,27 @@ SAVE_GAME:
     ld ($FF00+$1A),a
 .ENDIF
 
-    ; copy hi-ram and high registers and wave ram
-    ld hl,$FF30     ; source
-    ld de,io_save + $30  ; dest
-    ld bc,$46CF     ; length and ignore address
+    ; copy high-ram, registers, etc
+    ld hl, $FF00    ; source
+    ld d, >io_save  ; dest
+    ld c, 0         ; (256)
     call IO_COPY
 
     ; copy OAM 
-    ld hl,$FE00     ; source
-    ld de,oam_save  ; dest
-    ld bc,$FFA0     ; length and ignore address
+    ld hl, $fe00     ; source
+    ld d, >oam_save  ; dest
+    ld c, $a0        ; length
     call IO_COPY
-
-
 
     ; set magic byte
     ld a,magic_byte_value   
     ld (magic_byte_save),a
 
+.IFDEF is_cgb
 
+.INCLUDE "includes/save_cgb.s"
+
+.ELSE
     ld hl,$C000 ; input
     ld de,$A000 ; output
     ld bc,$2000 ; input length
@@ -82,7 +83,7 @@ SAVE_GAME:
     ld hl,$8000 ; source
 
     jr RAM_COPY
-
+.ENDIF
 
 ;***************************************************************************
 
@@ -91,7 +92,7 @@ LOAD_GAME:
 
     ld a,(magic_byte_save)   ; check for magic byte
     cp magic_byte_value
-    jr nz,ABORT_LOAD
+    jp nz,ABORT_LOAD
 
 
     ; set stack pointer to top of save ram
@@ -99,57 +100,82 @@ LOAD_GAME:
 
 
 .IFDEF game_uses_save_ram
-
-    ld a,(SAVE_STATE_RAM_BANK_SRAM)
+    ld a,(SAVE_STATE_SRAM_BANK_0)
     ld d,a
-
-    ; destination is always bank 0
     ld e,0
-    
     call COPY_BETWEEN_SRAM_BANKS
-
+.IFDEF current_sram_bank
+    ld de, (save_state_sram_bank_1 << 8) | 1
+    call COPY_BETWEEN_SRAM_BANKS
+    ld de, (save_state_sram_bank_2 << 8) | 2
+    call COPY_BETWEEN_SRAM_BANKS
+    ld de, (save_state_sram_bank_3 << 8) | 3
+    call COPY_BETWEEN_SRAM_BANKS
+.ENDIF
 .ENDIF
 
-
-    ld hl,oam_save ; source
-    ld de,$FE00 ; dest
-    ld bc,$FFA0 ; length and ignore address
+    ; restore OAM
+    ld hl, oam_save ; source
+    ld d, $fe       ; high(dest)
+    ld c, $a0       ; length
     call IO_COPY
 
+    ; restore low registers
+    ld hl, io_save + 1; source
+    ld d, $ff       ; high(dest)
+    ld c, $0f       ; length
+    call IO_COPY
 
 .IFDEF restore_wave_ram
     ; disable sound 3 before writing wave ram
     xor a
     ld ($FF00+$1A),a
 
-    ; copy hi-ram and high registers and wave ram
-    ld hl,io_save + $30; source
-    ld de,$FF30 ; dest  
-    ld bc,$46CF ; length - $cf bytes
+    ; copy wave ram
+    ld hl, io_save + $30 ; source
+    ld d, $ff   ; high(dest)
+    ld c, $10   ; length
+    call IO_COPY
+.ENDIF
+
+    ; copy ppu regs $ff40 - $ff45
+    ld hl, io_save + $40 ; source
+    ld d, $ff   ; high(dest)
+    ld c, $6 ; length
+    call IO_COPY
+
+.IFDEF is_cgb
+    ; copy more ppu regs and cgb $ff47 - $ff54
+    inc hl
+    ld c, $ff54 - $ff47 + 1 ; length
+    call IO_COPY
+
+    ; copy from $ff56 - $ffff
+    inc hl    
+    ld c, $ffff - $ff56 + 1 ; length
     call IO_COPY
 
 .ELSE
 
-    ; copy hi-ram and high registers
-    ld hl,io_save + $40; source
-    ld de,$FF40 ; dest  
-    ld bc,$46BF ; length - $bf bytes
+    ; copy more ppu regs and high ram $ff47 - $ffff
+    inc hl
+    ld c, $ffff - $ff47 + 1 ; length
     call IO_COPY
 
 .ENDIF
-
 
 
 .IFDEF restore_sound
     call RESTORE_SOUND
 .ENDIF
 
-    ; copy low registers
-    ld hl,io_save + 1; source
-    ld de,$FF01 ; dest  
-    ld bc,$460F ; length - $0f bytes
-    call IO_COPY
 
+
+.IFDEF is_cgb
+
+.INCLUDE "includes/load_cgb.s"
+
+.ELSE
 
     ; restore the WRAM
 
@@ -172,7 +198,7 @@ LOAD_GAME:
 
 
     ld de,$8000 ; dest
-
+.ENDIF
 
     ; cannot call this because stack is not available when switching to this bank
 
@@ -240,13 +266,17 @@ wait_vbl:
     jr nz,wait_vbl
 
 
-    xor a  
-
 .IFDEF game_uses_save_ram
-    ; restore bank 0
+    ; restore sram bank
+    .IFDEF current_sram_bank
+        ld a, (current_sram_bank)
+    .ELSE
+        xor a
+    .ENDIF
     ld (ram_bank_select),a
 .ELSE
     ; lock access to ram bank
+    xor a  
     ld (ram_access_toggle),a
 .ENDIF
 

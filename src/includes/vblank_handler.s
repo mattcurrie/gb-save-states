@@ -30,7 +30,11 @@
         ; change the rom bank while waiting for joypad lines to settle
        
         ; save current ROM bank
-        ld a,(current_rom_bank)
+        .IFNDEF should_detect_rom_bank
+            ld a,(current_rom_bank)
+        .ELSE
+            detect_rom_bank
+        .ENDIF
         push af
 
         ; set the required rom bank
@@ -65,6 +69,12 @@
     ldh ($00),a
 
     pop af
+
+.IFDEF original_vblank_handler_pushes
+    
+    .DB original_vblank_handler_pushes
+
+.ENDIF
 
 .IFDEF use_call_for_original_vblank_handler
     call original_vblank_handler

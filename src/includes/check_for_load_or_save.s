@@ -64,7 +64,14 @@ PREPARE_FOR_SAVE_OR_LOAD:
     ld a,$0a  ; enable access to ram bank
     ld (ram_access_toggle),a
 
-
+.IFDEF is_cgb
+    ; wait for any in progress G/HDMA
+    ; $ff in $ff55 indicates G/HDMA is complete
+dma_wait_loop:
+    ldh a, ($55)
+    inc a
+    jr nz, dma_wait_loop
+.ENDIF
 
 
 SCREEN_OFF:

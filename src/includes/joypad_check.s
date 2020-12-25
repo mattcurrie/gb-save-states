@@ -65,7 +65,11 @@ start_pressed:
 .IFDEF current_rom_bank
 .IFNDEF already_changed_rom_bank
         ; save current ROM bank
-        ld a,(current_rom_bank)
+        .IFNDEF should_detect_rom_bank
+            ld a,(current_rom_bank)
+        .ELSE
+            detect_rom_bank
+        .ENDIF
         push af
 .ENDIF
 .ENDIF
