@@ -27,7 +27,11 @@ invoke_relocated_read_from_joypad_in_other_bank:
 
 .IFDEF current_rom_bank
     ; save current ROM bank
-    ld a,(current_rom_bank)
+    .IFNDEF should_detect_rom_bank
+        ld a,(current_rom_bank)
+    .ELSE
+        detect_rom_bank
+    .ENDIF
     push af
 
     ld a,:relocated_read_from_joypad
