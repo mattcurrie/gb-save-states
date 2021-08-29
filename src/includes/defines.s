@@ -11,7 +11,12 @@
 ; CGB requires 128 KB
 .RAMSIZE 4
 .ELSE
-.RAMSIZE 3
+    .IFDEF current_sram_bank
+        ; 32 KB SRAM games require 128 KB SRAM
+        .RAMSIZE 4
+    .ELSE
+        .RAMSIZE 3
+    .ENDIF
 .ENDIF
 
 .COMPUTECHECKSUM
@@ -56,45 +61,69 @@
     SAVE_STATE_RAM_BANK:
     .DB 4
 
-.DEFINE save_state_vram_bank_0 5
-.DEFINE save_state_vram_bank_1 6
-.DEFINE save_state_wram_bank_01 7
-.DEFINE save_state_wram_bank_23 8
-.DEFINE save_state_wram_bank_45 9
-.DEFINE save_state_wram_bank_67 10
+    .DEFINE save_state_vram_bank_0 5
+    .DEFINE save_state_vram_bank_1 6
+    .DEFINE save_state_wram_bank_01 7
+    .DEFINE save_state_wram_bank_23 8
+    .DEFINE save_state_wram_bank_45 9
+    .DEFINE save_state_wram_bank_67 10
 
     SAVE_STATE_SRAM_BANK_0:
     .DB 11
 
-.DEFINE save_state_sram_bank_1 12
-.DEFINE save_state_sram_bank_2 13
-.DEFINE save_state_sram_bank_3 14
+    .DEFINE save_state_sram_bank_1 12
+    .DEFINE save_state_sram_bank_2 13
+    .DEFINE save_state_sram_bank_3 14
 
 .ELSE
+
     RAM_SHARING_MAGIC_BYTES:
     .DB "SRAM_CFG"
 
-.IFDEF game_uses_save_ram
+    .IFDEF game_uses_save_ram
 
-    NUMBER_OF_BANKS:
-    .DB 4
+        .IFDEF current_sram_bank
+            ; game uses 32KB of SRAM
 
-    GAME_SRAM:
-    .DB 0
+            ; this is where we put the working stack for the save state,
+            ; and any I/O register values, colour palettes, etc
+            SAVE_STATE_RAM_BANK:
+            .DB 4
 
-    SAVE_STATE_SRAM_BANK_0:
-    .DB 1
+            SAVE_STATE_RAM_BANK_VRAM:
+            .DB 5
 
-.ELSE
-    NUMBER_OF_BANKS:
-    .DB 2
-.ENDIF
+            SAVE_STATE_SRAM_BANK_0:
+            .DB 11
 
-    SAVE_STATE_RAM_BANK_VRAM:
-    .DB 2
+            .DEFINE save_state_sram_bank_1 12
+            .DEFINE save_state_sram_bank_2 13
+            .DEFINE save_state_sram_bank_3 14
 
-    SAVE_STATE_RAM_BANK:
-    .DB 3
+        .ELSE
+            ; game uses 8KB of SRAM
+
+            NUMBER_OF_BANKS:
+                .DB 4
+            GAME_SRAM:
+                .DB 0
+            SAVE_STATE_SRAM_BANK_0:
+                .DB 1
+            SAVE_STATE_RAM_BANK_VRAM:
+                .DB 2
+            SAVE_STATE_RAM_BANK:
+                .DB 3
+
+        .ENDIF
+
+    .ELSE
+        NUMBER_OF_BANKS:
+            .DB 2
+        SAVE_STATE_RAM_BANK_VRAM:
+            .DB 2
+        SAVE_STATE_RAM_BANK:
+            .DB 3
+    .ENDIF
 
     SAVE_STATE_PATCH_MAGIC_BYTES:
     .DB "SSPMB"
