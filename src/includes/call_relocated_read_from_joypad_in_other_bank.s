@@ -18,11 +18,13 @@ invoke_relocated_read_from_joypad_in_other_bank:
 
 
 .IFNDEF calling_from_vblank
+.IFNDEF do_not_disable_interrupts
     ; disable interrupts
     ld a,($ff00+$ff)   
     push af            
     xor a              
     ld ($ff00+$ff),a   
+.ENDIF
 .ENDIF
 
 .IFDEF current_rom_bank
@@ -52,8 +54,10 @@ invoke_relocated_read_from_joypad_in_other_bank:
 
 
 .IFNDEF calling_from_vblank
+.IFNDEF do_not_disable_interrupts
     ; enable interrupts
     pop af
     ld ($ff00+$ff),a
+.ENDIF
 .ENDIF
 

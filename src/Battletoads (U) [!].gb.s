@@ -13,20 +13,23 @@
 .DEFINE joypad $c903
 .DEFINE joypad_2 $c901
 .DEFINE current_rom_bank $4000
-
+.DEFINE do_not_disable_interrupts 1
 
 ;***************
 ;* joypad read *
 ;***************
 
 .BANK $00 SLOT 0
+
+.ORG $32ff
+resume_joypad_read:
+
 .ORG $32cc
-.SECTION "joypad read" SIZE $34 OVERWRITE   
+.SECTION "joypad read" SIZE $33 OVERWRITE   
     .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.s"
     ld a,(joypad)
     ld c,a
     jr resume_joypad_read
-    .DEFINE resume_joypad_read $32ff
 .ENDS
 
 
