@@ -12,6 +12,7 @@
 
 .DEFINE joypad $ffec
 .DEFINE joypad_2 $ffeb
+.DEFINE read_joypad_value_from_b_register 1
 .DEFINE current_rom_bank $ff8c
 
 

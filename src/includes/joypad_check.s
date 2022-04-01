@@ -16,6 +16,7 @@
 ; .DEFINE preserve_registers 1
 ; .DEFINE interrupts_already_disabled 1
 ; .DEFINE already_changed_rom_bank 1
+; .DEFINE read_joypad_value_from_b_register 1
 ;
 ;***************************************************************************
 
@@ -29,7 +30,11 @@ joypad_check:
 .ENDIF
 
     ; read value of joypad
+.IFDEF read_joypad_value_from_b_register
+    ld a, b
+.ELSE
     ld a,(joypad)
+.ENDIF
 .IFDEF swap_joypad
     swap a
 .ENDIF
@@ -95,14 +100,14 @@ start_pressed:
 .IFNDEF already_changed_rom_bank
 
         ; store the response code for later
-        ld b,a
+        ld c,a
 
         ; restore previous ROM bank
         pop af
         ld ($2000),a
 
         ; restore the response code
-        ld a,b
+        ld a,c
 .ENDIF
 .ENDIF
 
@@ -116,6 +121,10 @@ start_pressed:
 
 .IFDEF cpl_joypad
     cpl
+.ENDIF
+
+.IFDEF read_joypad_value_from_b_register
+    ld b, a
 .ENDIF
 
     ld (joypad),a
