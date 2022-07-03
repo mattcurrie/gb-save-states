@@ -33,6 +33,9 @@ relocated_read_from_joypad:
     xor c            
     and c            
     ld (joypad_2),a     
+.IFDEF joypad_4
+    ld (joypad_4),a     
+.ENDIF
 
     ld a,c           
 .ENDIF    
