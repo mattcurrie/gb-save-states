@@ -8,7 +8,7 @@ Patches to add save state support to Game Boy and Game Boy Color games when play
 - For Game Boy games:
    - Flash cart that supports 32KB of save RAM and MBC 1/5 mapper
 - For Game Boy Color games, and Game Boy games that originally include save RAM:
-   - Flash cart that supports 128KB of save RAM and MBC 5 mapper, e.g. EZ Flash Jr. or EverDrive-GB X3/X5/X7
+   - Flash cart that supports 128KB of save RAM and MBC 5 mapper, e.g. EZ Flash Jr. or EverDrive-GB X3/X5/X7. Not sure how much save RAM your flash cart supports? [Try this test ROM on your flash cart.](https://github.com/eievui5/sram128/releases/tag/v1.0.1)
 - Original ROM file for the game
 - Patching software that supports bsdiff patches:
 
