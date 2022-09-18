@@ -43,6 +43,9 @@ if [[ $original_rom_md5 != $required_md5 ]]; then
     abort "ROM in original-roms directory has md5 hash ${original_rom_md5}. Require ${required_md5}. Aborting..."
 fi
 
+# create checksum file
+original_rom_checksum_path="../checksums/${original_rom_filename}.md5"
+echo $original_rom_md5 > "${original_rom_checksum_path}"
 
 cp "${original_rom_path}" "${original_rom_filename}"
 
