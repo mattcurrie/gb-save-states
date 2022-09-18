@@ -56,10 +56,10 @@ PREPARE_FOR_SAVE_OR_LOAD:
 
     ; prepare for save or load
 
-
+.IFNDEF uses_mbc5
     ld a,1                      ; set MBC1 mode to 4/32KB
     ld ($6000),a
-
+.ENDIF
 
     ld a,$0a  ; enable access to ram bank
     ld (ram_access_toggle),a
