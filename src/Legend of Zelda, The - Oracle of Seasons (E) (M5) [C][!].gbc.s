@@ -8,32 +8,26 @@
 
 ; config
 .DEFINE is_cgb 1
-.DEFINE current_rom_bank $ffd8
+.DEFINE current_rom_bank $7fff
 .DEFINE game_uses_save_ram 1
 .DEFINE uses_mbc5 1
 
 
-; joypad
-.DEFINE joypad $c481
-.DEFINE joypad_2 $c480
-.DEFINE joypad_3 $c482
+; vblank
+.DEFINE vblank_handler $3ef3
+.DEFINE original_vblank_handler $09f6
+.DEFINE original_vblank_handler_pushes $f5 $c5 $d5 $e5
+.INCLUDE "includes/vblank_handler.s"
 
-.BANK $0000 SLOT 0
-.ORG $3ef8
-.SECTION "relocated read from joypad" SIZE $003b OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.s"
-.ENDS
-    
-.ORG $0290
-.SECTION "joypad read" SIZE 3 OVERWRITE
-    call relocated_read_from_joypad
-.ENDS
-    
 
 ; save/load state
-.BANK $0001 SLOT 1
-.ORG $3000
+.BANK $0033 SLOT 1
+.ORG $0001
 .SECTION "save/load state" SIZE $0315 OVERWRITE
     .DB "--- Save Patch ---"
+    .INCLUDE "includes/joypad_read_and_check.s"
     .INCLUDE "includes/save_state_includes.s"
 .ENDS
+
+
+; Generated with patch-builder.py

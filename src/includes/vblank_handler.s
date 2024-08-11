@@ -24,7 +24,7 @@
 .ENDS
 
 .ORG vblank_handler
-.SECTION "vblank handler" SIZE $1D OVERWRITE
+.SECTION "vblank handler" SIZE $22 OVERWRITE
 
     .IFDEF current_rom_bank
         ; change the rom bank while waiting for joypad lines to settle
