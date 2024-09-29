@@ -32,12 +32,13 @@
 
 .BANK $00 SLOT 0
 .ORG $0af7
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+.SECTION "joypad read" SIZE 8 OVERWRITE   
     call relocated_read_from_joypad
     nop
-	nop
-	nop
-	nop
+    nop
+    nop
+    nop
+    nop
 .ENDS
 
 

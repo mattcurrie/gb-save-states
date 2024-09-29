@@ -31,7 +31,7 @@
 
 .BANK $0000 SLOT 0
 .ORG $0071
-.SECTION "relocated read from joypad" SIZE $0035 OVERWRITE
+.SECTION "relocated read from joypad" SIZE $0038 OVERWRITE
     .INCLUDE "includes/relocated_read_from_joypad.s"
 .ENDS
 
