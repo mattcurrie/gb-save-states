@@ -39,7 +39,7 @@
 
 .BANK $0000 SLOT 0
 .ORG $081a
-.SECTION "joypad read" SIZE $20 OVERWRITE
+.SECTION "joypad read" SIZE $2f OVERWRITE
     .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.s"
     ret
 .ENDS
