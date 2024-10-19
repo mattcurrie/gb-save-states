@@ -5,7 +5,9 @@
 ;
 ;***************************************************************************
 
-.DEFINE interrupts_already_disabled 1
+.IFNDEF do_not_disable_interrupts
+    .DEFINE interrupts_already_disabled 1
+.ENDIF
 .DEFINE already_changed_rom_bank 1
 
 
@@ -37,6 +39,9 @@ invoke_relocated_read_from_joypad_in_other_bank:
     push af
 
     ld a,:relocated_read_from_joypad
+    .IFDEF set_current_rom_bank
+        ld (current_rom_bank), a
+    .ENDIF
     ld ($2000),a
 .ENDIF
 
@@ -49,6 +54,9 @@ invoke_relocated_read_from_joypad_in_other_bank:
 .IFDEF current_rom_bank
     ; restore previous ROM bank
     pop af
+    .IFDEF set_current_rom_bank
+        ld (current_rom_bank), a
+    .ENDIF
     ld ($2000),a
 .ENDIF
 

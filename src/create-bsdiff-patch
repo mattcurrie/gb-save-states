@@ -99,7 +99,11 @@ echo "Creating patch..."
 bsdiff "${original_rom_path}" "patched.gb" "patch.bsdiff"
 
 # move results into place
-cp patch.bsdiff "../patches/${original_rom_filename}.bsdiff"
+if [[ "${original_rom_filename}" == *.gbc ]]; then
+  cp patch.bsdiff "../patches/cgb/${original_rom_filename}.bsdiff"
+else
+  cp patch.bsdiff "../patches/${original_rom_filename}.bsdiff"
+fi
 mv patched.gb "../patched-roms/${original_rom_filename}"
 
 # clean up
