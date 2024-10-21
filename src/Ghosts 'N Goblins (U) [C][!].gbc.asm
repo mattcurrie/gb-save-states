@@ -1,41 +1,34 @@
 ; md5 9b846e9a4eb6b80cdbc8e6c82f2b9e9e
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 64
-.BACKGROUND "Ghosts 'N Goblins (U) [C][!].gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 64
+; ROM "Ghosts 'N Goblins (U) [C][!].gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $7fff
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $7fff
+DEF uses_mbc5 EQU 1
 
 
 ; joypad
-.DEFINE joypad $c0e0
-.DEFINE joypad_2 $c0e1
+DEF joypad EQU $c0e0
+DEF joypad_2 EQU $c0e1
 
-.BANK $0000 SLOT 0
-.ORG $00bf
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$00bf] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $009b
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$009b] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0002 SLOT 1
-.ORG $1bd9
-.SECTION "save/load state" SIZE $0270 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$5BD9], BANK[$0002] ; length: $0270
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

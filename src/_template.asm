@@ -1,54 +1,46 @@
 ; md5 insert-md5-hash
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS insert-number-of-banks
-.BACKGROUND "insert-rom-file-name"
-.INCLUDE "includes/header.asm"
+; ROMBANKS insert-number-of-banks
+; ROM "insert-rom-file-name"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $tttt
-.DEFINE joypad_2 $ssss
-.DEFINE current_rom_bank $iiii
+DEF joypad EQU $tttt
+DEF joypad_2 EQU $ssss
+DEF current_rom_bank EQU $iiii
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $0080
-.SECTION "relocated read from joypad" SIZE $70 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0080] ; length: $70
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0150
-.BANK $00 SLOT 0
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+DEF RESET_RAM_DONE EQU $0150
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $qqqq
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+SECTION "joypad read", ROM0[$qqqq] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
@@ -56,8 +48,7 @@
 ;*******************
 
 .BANK $zz SLOT 1
-.ORG $xxxx
-.SECTION "save/load state" SIZE $yyyy OVERWRITE
-    .DB "--- XXXXX Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROM0[$xxxx] ; length: 4
+    DB "--- XXXXX Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

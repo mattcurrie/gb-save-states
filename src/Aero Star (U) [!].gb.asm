@@ -1,62 +1,53 @@
 ; md5 f777a4526089a83ca758efbf01007ec1
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Aero Star (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Aero Star (U) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff8e
-.DEFINE joypad_2 $ff8f
-.DEFINE joypad_3 $ff90
-.DEFINE current_rom_bank $ffb6
+DEF joypad EQU $ff8e
+DEF joypad_2 EQU $ff8f
+DEF joypad_3 EQU $ff90
+DEF current_rom_bank EQU $ffb6
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0150
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0150
 
-.ORG $007b
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$007b] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $02ee
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$02ee] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0003 SLOT 1
-.ORG $27cd
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$67CD], BANK[$0003] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

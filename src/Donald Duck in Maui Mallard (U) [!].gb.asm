@@ -1,64 +1,54 @@
 ; md5 6dfcaebffc8e2645bb2b1e5be69e1514
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Donald Duck in Maui Mallard (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Donald Duck in Maui Mallard (U) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff8c
-.DEFINE current_rom_bank $4000
+DEF joypad EQU $ff8c
+DEF current_rom_bank EQU $4000
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0444
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0444
 
-.ORG $00ab
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$00ab] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $006b
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$006b] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $060a
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$060a] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0001 SLOT 1
-.ORG $3724
-.SECTION "save/load state" SIZE $0220 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7724], BANK[$0001] ; length: $0220
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

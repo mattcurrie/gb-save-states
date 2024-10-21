@@ -1,56 +1,49 @@
 ; md5 a8b74d14e66f7a3049e79ca147141d52
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "F-15 Strike Eagle (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "F-15 Strike Eagle (U) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $c8aa
+DEF current_rom_bank EQU $c8aa
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0150
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0150
 
-.ORG $0027
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$0027] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;**********
 ;* vblank *
 ;**********
 
-.DEFINE vblank_handler $0004
-.DEFINE original_vblank_handler $0339
-.INCLUDE "includes/vblank_handler.asm"
+DEF vblank_handler EQU $0004
+DEF original_vblank_handler EQU $0339
+INCLUDE "includes/vblank_handler.asm"
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0003 SLOT 1
-.ORG $39f9
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$79F9], BANK[$0003] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

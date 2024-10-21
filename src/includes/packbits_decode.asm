@@ -39,7 +39,7 @@ PACKBITS_DECODE_MAIN_LOOP:
 PACKBITS_DECODE_READ_NEXT_HEADER_BYTE:
 
     ; read the header byte
-    ld a,(hl+)   
+    ld a,[hl+]   
 
     ; save the end output address
     push bc
@@ -62,8 +62,8 @@ PACKBITS_DECODE_LITERAL_DATA:
 PACKBITS_DECODE_LITERAL_DATA_LOOP:
     
     ; copy one byte of the data
-    ld a,(hl+)
-    ld (de),a
+    ld a,[hl+]
+    ld [de],a
     inc de
 
     dec c
@@ -87,11 +87,11 @@ PACKBITS_DECODE_REPEATED_BYTE:
     dec c
 
     ; read the byte value to be repeated in the output
-    ld a,(hl+)
+    ld a,[hl+]
 
 PACKBITS_DECODE_REPEATED_BYTE_LOOP:    
 
-    ld (de),a
+    ld [de],a
     inc de
 
     ; increase the negative counter value towards reset

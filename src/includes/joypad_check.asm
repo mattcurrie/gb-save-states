@@ -4,43 +4,43 @@
 ; function to check whether any of button combos are pressed.
 ;
 ; The following defines are required:
-; .DEFINE joypad $ff00+$8b
+; DEF joypad EQU $ff00+$8b
 ;
 ; Optional:
-; .DEFINE current_rom_bank $7fff
-; .DEFINE joypad_2 $ff00+$8c
-; .DEFINE joypad_3 $ff00+$8d
-; .DEFINE swap_joypad 1
-; .DEFINE cpl_joypad 1
-; .DEFINE dont_save_interrupt_flags 1
-; .DEFINE preserve_registers 1
-; .DEFINE interrupts_already_disabled 1
-; .DEFINE already_changed_rom_bank 1
-; .DEFINE read_joypad_value_from_b_register 1
+; DEF current_rom_bank EQU $7fff
+; DEF joypad_2 EQU $ff00+$8c
+; DEF joypad_3 EQU $ff00+$8d
+; DEF swap_joypad EQU 1
+; DEF cpl_joypad EQU 1
+; DEF dont_save_interrupt_flags EQU 1
+; DEF preserve_registers EQU 1
+; DEF interrupts_already_disabled EQU 1
+; DEF already_changed_rom_bank EQU 1
+; DEF read_joypad_value_from_b_register EQU 1
 ;
 ;***************************************************************************
 
 joypad_check:
 
-.IFDEF preserve_registers
+IF DEF(preserve_registers)
     push af
     push bc
     push de
     push hl
-.ENDIF
+ENDC
 
     ; read value of joypad
-.IFDEF read_joypad_value_from_b_register
+IF DEF(read_joypad_value_from_b_register)
     ld a, b
-.ELSE
-    ld a,(joypad)
-.ENDIF
-.IFDEF swap_joypad
+ELSE
+    ld a,[joypad]
+ENDC
+IF DEF(swap_joypad)
     swap a
-.ENDIF
-.IFDEF cpl_joypad
+ENDC
+IF DEF(cpl_joypad)
     cpl
-.ENDIF
+ENDC
 
     ; copy joypad value into C register
     ld c,a
@@ -52,64 +52,64 @@ joypad_check:
 
 start_pressed:
 
-.IFNDEF interrupts_already_disabled
+IF !DEF(interrupts_already_disabled)
     ; save the currently enabled interrupts and then disable all
-    ld a,($ff00+$ff)   
+    ldh a,[$ff00+$ff]   
     push af            
     xor a              
-    ld ($ff00+$ff),a   
-.ENDIF
+    ldh [$ff00+$ff],a   
+ENDC
 
-.IFNDEF dont_save_interrupt_flags
+IF !DEF(dont_save_interrupt_flags)
     ; read current interrupt flag
-    ld a,($ff00+$0f)
+    ldh a,[$ff00+$0f]
     push af
-.ENDIF
+ENDC
 
 
-.IFDEF current_rom_bank
-.IFNDEF already_changed_rom_bank
+IF DEF(current_rom_bank)
+IF !DEF(already_changed_rom_bank)
         ; save current ROM bank
-        .IFNDEF should_detect_rom_bank
-            ld a,(current_rom_bank)
-        .ELSE
+        IF !DEF(should_detect_rom_bank)
+            ld a,[current_rom_bank]
+        ELSE
             detect_rom_bank
-        .ENDIF
+        ENDC
         push af
-.ENDIF
-.ENDIF
+ENDC
+ENDC
 
 
-.IFDEF current_rom_bank
-.IFNDEF already_changed_rom_bank
-            ld a,:CHECK_FOR_SAVE_OR_LOAD_GAME
-            ld ($2000),a
-.ENDIF
-.ENDIF
+IF DEF(current_rom_bank)
+IF !DEF(already_changed_rom_bank)
+            ld a,BANK(CHECK_FOR_SAVE_OR_LOAD_GAME)
+            ld [$2000],a
+ENDC
+ENDC
 
-.IFDEF check_for_save_or_load_via_bank_0
+IF DEF(check_for_save_or_load_via_bank_0)
             call CHECK_FOR_SAVE_OR_LOAD_GAME_VIA_BANK_0
-.ELSE
+ELSE
             call CHECK_FOR_SAVE_OR_LOAD_GAME
-.ENDIF
+ENDC
 
 
 
 
-.IFDEF current_rom_bank
-.IFNDEF already_changed_rom_bank
+IF DEF(current_rom_bank)
+IF !DEF(already_changed_rom_bank)
 
         ; store the response code for later
         ld c,a
 
         ; restore previous ROM bank
         pop af
-        ld ($2000),a
+        ld [$2000],a
 
         ; restore the response code
         ld a,c
-.ENDIF
-.ENDIF
+ENDC
+ENDC
 
 
     ; check the response code to see if loaded/saved a game 
@@ -119,46 +119,46 @@ start_pressed:
     ; clear the joypad state - prevents the game from pausing
     xor a
 
-.IFDEF cpl_joypad
+IF DEF(cpl_joypad)
     cpl
-.ENDIF
+ENDC
 
-.IFDEF read_joypad_value_from_b_register
+IF DEF(read_joypad_value_from_b_register)
     ld b, a
-.ENDIF
+ENDC
 
-    ld (joypad),a
-.IFDEF joypad_2
-    ld (joypad_2),a
-.ENDIF
-.IFDEF joypad_3
-    ld (joypad_3),a
-.ENDIF
+    ld [joypad],a
+IF DEF(joypad_2)
+    ld [joypad_2],a
+ENDC
+IF DEF(joypad_3)
+    ld [joypad_3],a
+ENDC
 
 
 save_or_load_continue:
 
-.IFNDEF dont_save_interrupt_flags
+IF !DEF(dont_save_interrupt_flags)
     ; restore old interrupt flag value off the stack
     pop af
-    ld ($ff00+$0f),a
-.ENDIF
+    ldh [$ff00+$0f],a
+ENDC
  
-.IFNDEF interrupts_already_disabled
+IF !DEF(interrupts_already_disabled)
     ; enable interrupts - pop value for IE register from stack
     pop af
-    ld ($ff00+$ff),a   
-.ENDIF
+    ldh [$ff00+$ff],a   
+ENDC
 
 joypad_check_end:
 
-.IFDEF preserve_registers
+IF DEF(preserve_registers)
 restore_registers:
     pop hl
     pop de
     pop bc
     pop af
-.ENDIF
+ENDC
 
 
 start_pressed_end:

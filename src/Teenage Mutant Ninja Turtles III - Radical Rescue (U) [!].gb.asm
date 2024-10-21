@@ -1,49 +1,43 @@
 ; md5 e6104df1feb1318ff1764c791eb4ce0e
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Teenage Mutant Ninja Turtles III - Radical Rescue (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Teenage Mutant Ninja Turtles III - Radical Rescue (U) [!].gb"
 
 
 ; config
-.DEFINE current_rom_bank $c002
-.DEFINE set_current_rom_bank 1
-.DEFINE do_not_disable_interrupts 1
+DEF current_rom_bank EQU $c002
+DEF set_current_rom_bank EQU 1
+DEF do_not_disable_interrupts EQU 1
 
 
 ; joypad
-.DEFINE joypad $c033
-.DEFINE joypad_2 $c035
-.DEFINE swap_joypad 1
+DEF joypad EQU $c033
+DEF joypad_2 EQU $c035
+DEF swap_joypad EQU 1
 
-.BANK $0000 SLOT 0
-.ORG $04cf
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$04cf] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0006 SLOT 1
-.ORG $3c03
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
+SECTION "save/load state", ROMX[$7C03], BANK[$0006] ; length: $02a0
+    DB "--- Save Patch ---"
 
 relocated_read_from_joypad:
-    .DB $3E, $20, $E0, $00, $F0, $00, $F0, $00, $2F, $E6, $0F, $47, $3E, $10, $E0, $00
-    .DB $F0, $00, $F0, $00, $F0, $00, $F0, $00, $F0, $00, $F0, $00, $F0, $00, $F0, $00
-    .DB $2F, $E6, $0F, $CB, $37, $B0, $4F, $FA, $33, $C0, $A9, $A1, $EA, $35, $C0, $EA
-    .DB $3C, $C0, $47, $79, $EA, $33, $C0, $EA, $3D, $C0, $3E, $30, $E0, $00
+    DB $3E, $20, $E0, $00, $F0, $00, $F0, $00, $2F, $E6, $0F, $47, $3E, $10, $E0, $00
+    DB $F0, $00, $F0, $00, $F0, $00, $F0, $00, $F0, $00, $F0, $00, $F0, $00, $F0, $00
+    DB $2F, $E6, $0F, $CB, $37, $B0, $4F, $FA, $33, $C0, $A9, $A1, $EA, $35, $C0, $EA
+    DB $3C, $C0, $47, $79, $EA, $33, $C0, $EA, $3D, $C0, $3E, $30, $E0, $00
 
     push bc
-    .INCLUDE "includes/joypad_check.asm"
+    INCLUDE "includes/joypad_check.asm"
     pop bc
     ret
 
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

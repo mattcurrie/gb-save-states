@@ -1,42 +1,36 @@
 ; md5 d335d4d79ed002c7a67863e82ceaa472
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 32
-.BACKGROUND "B.C. Kid (E) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 32
+; ROM "B.C. Kid (E) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff8d
-.DEFINE joypad_2 $ff8e
-.DEFINE current_rom_bank $c148
+DEF joypad EQU $ff8d
+DEF joypad_2 EQU $ff8e
+DEF current_rom_bank EQU $c148
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.DEFINE resume_read_from_joypad $0597
-.BANK $00 SLOT 0
-.ORG $0562
-.SECTION "joypad read" SIZE $34 OVERWRITE   
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
-    ei 
-    jp resume_read_from_joypad   
-.ENDS
+DEF resume_read_from_joypad EQU $0597
+SECTION "joypad read", ROM0[$0562] ; length: $34
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+    ei
+    jp resume_read_from_joypad
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $10 SLOT 1
-.ORG $0
-.SECTION "save/load state" SIZE $4000 OVERWRITE
-    .DB "--- B.C. Kid Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$10] ; length: $4000
+    DB "--- B.C. Kid Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

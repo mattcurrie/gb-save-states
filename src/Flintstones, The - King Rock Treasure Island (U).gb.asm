@@ -1,48 +1,41 @@
 ; md5 25dfaca5120462af05532aaf4756776a
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Flintstones, The - King Rock Treasure Island (U).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Flintstones, The - King Rock Treasure Island (U).gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ffa6
-.DEFINE joypad_2 $ffa7
-.DEFINE current_rom_bank $7fff
+DEF joypad EQU $ffa6
+DEF joypad_2 EQU $ffa7
+DEF current_rom_bank EQU $7fff
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $0380
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$0380] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     jp $03b0
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0008 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$0008] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
-.ORG $3fff
-.SECTION "new bank" SIZE 1 OVERWRITE
-    .DB $8
-.ENDS
+SECTION "new bank", ROMX[$7FFF], BANK[$0008] ; length: 1
+    DB $8
+ENDSECTION
 
 
 ; Generated with patch-builder.py

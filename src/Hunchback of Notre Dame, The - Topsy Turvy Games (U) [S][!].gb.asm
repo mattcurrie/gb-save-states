@@ -1,65 +1,55 @@
 ; md5 3f55fde8e05a4d372f7f30a1f7398fb5
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 32
-.BACKGROUND "Hunchback of Notre Dame, The - Topsy Turvy Games (U) [S][!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 32
+; ROM "Hunchback of Notre Dame, The - Topsy Turvy Games (U) [S][!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $c300
-.DEFINE joypad_2 $c301
-.DEFINE swap_joypad 1
+DEF joypad EQU $c300
+DEF joypad_2 EQU $c301
+DEF swap_joypad EQU 1
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0150
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0150
 
-.ORG $00a5
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$00a5] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $0064
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0064] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $12a7
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$12a7] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0000 SLOT 0
-.ORG $3d0b
-.SECTION "save/load state" SIZE $0220 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROM0[$3d0b] ; length: $0220
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

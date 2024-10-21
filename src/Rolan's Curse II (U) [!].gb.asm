@@ -1,51 +1,47 @@
 ; md5 27f2c99b13cbdb5a5be4afce87b9039b
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Rolan's Curse II (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Rolan's Curse II (U) [!].gb"
 
 
 ; config
-.DEFINE current_rom_bank $ff8e
-.DEFINE game_uses_save_ram 1
+DEF current_rom_bank EQU $ff8e
+DEF game_uses_save_ram EQU 1
 
 
 ;*************
 ;* reset ram *
 ;*************
-.DEFINE RESET_RAM_DONE $0150
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0150
 
-.ORG $00c0
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$00c0] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;**********
 ;* vblank *
 ;**********
 
-.DEFINE vblank_handler $0062
-.DEFINE original_vblank_handler $039c
-.DEFINE original_vblank_handler_pushes $f5 $c5 $d5 $e5
-.INCLUDE "includes/vblank_handler.asm"
+DEF vblank_handler EQU $0062
+DEF original_vblank_handler EQU $039c
+DEF original_vblank_handler_pushes EQU 1
+MACRO original_vblank_handler_pushes_macro
+    db $f5, $c5, $d5, $e5
+ENDM
+INCLUDE "includes/vblank_handler.asm"
 
 
 ; save/load state
-.BANK $0008 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $02c5 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$0008] ; length: $02c5
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

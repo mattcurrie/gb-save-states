@@ -1,60 +1,51 @@
 ; md5 9d94d01d3133165d4469bb27d58f0f6c
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Bill & Ted's Excellent Gameboy Adventure (UE) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Bill & Ted's Excellent Gameboy Adventure (UE) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff8e
-.DEFINE joypad_2 $ff8f
+DEF joypad EQU $ff8e
+DEF joypad_2 EQU $ff8f
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0070
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0070
 
-.ORG $0028
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$0028] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $02aa
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$02aa] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     jp $02db
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0000 SLOT 0
-.ORG $3ce1
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROM0[$3ce1] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

@@ -1,49 +1,42 @@
 ; md5 0221de99d11f50f79430c8ff9b430994
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 32
-.BACKGROUND "Teenage Mutant Ninja Turtles - Back From the Sewers (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 32
+; ROM "Teenage Mutant Ninja Turtles - Back From the Sewers (U) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $c7a7
+DEF current_rom_bank EQU $c7a7
 
 
 ;**********
 ;* joypad *
 ;**********
 
-.DEFINE joypad $c78e
-.DEFINE joypad_2 $c78f
-.DEFINE swap_joypad 1
+DEF joypad EQU $c78e
+DEF joypad_2 EQU $c78f
+DEF swap_joypad EQU 1
 
-.BANK $0000 SLOT 0
-.ORG $00be
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$00be] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $083b
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$083b] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0010 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $0220 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$0010] ; length: $0220
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

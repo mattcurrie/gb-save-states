@@ -21,13 +21,13 @@ The process below is for a standard game.  Some games might be a bit more compli
 
    ```./init-patch ~/game.gb```
 
-   The script will create a file in the ```/src``` directory with the name of the ROM file with ```.asm``` appended.
+   The script will create a file in the ```/src``` directory with the name of the ROM file with ```.s``` appended.
 
 2. Open the original ROM in BGB emulator.
 
-3. Next we need to check if the game resets the internal RAM when it starts up. In BGB add a write access breakpoint for `C300-C500` and reset the game.  Hopefully the breakpoint will be triggered inside a function that resets all of the internal RAM.  If so, you can delete the reset ram section from the patch file, and delete the ```.INCLUDE "includes/reset_ram.asm"``` directive.
+3. Next we need to check if the game resets the internal RAM when it starts up. In BGB add a write access breakpoint for `C300-C500` and reset the game.  Hopefully the breakpoint will be triggered inside a function that resets all of the internal RAM.  If so, you can delete the reset ram section from the patch file, and delete the ```.INCLUDE "includes/reset_ram.s"``` directive.
 
-   If the game doesn't reset the RAM itself, then the ROM patch needs to do it. This is so that the PackBits RLE will be able to compress the internal RAM efficiently.  Check that the game jumps to ```$0150``` from ```$0101```.  If not then update the ```RESET_RAM_DONE``` define to set the correct address.  You will also need the ```.INCLUDE "includes/reset_ram.asm"``` directive somewhere in bank 0. There is often space between ```$0080``` and ```$0100```, so the template includes reset_ram.asm in the "relocated read from joypad" section by default.
+   If the game doesn't reset the RAM itself, then the ROM patch needs to do it. This is so that the PackBits RLE will be able to compress the internal RAM efficiently.  Check that the game jumps to ```$0150``` from ```$0101```.  If not then update the ```RESET_RAM_DONE``` define to set the correct address.  You will also need the ```.INCLUDE "includes/reset_ram.s"``` directive somewhere in bank 0. There is often space between ```$0080``` and ```$0100```, so the template includes reset_ram.s in the "relocated read from joypad" section by default.
   
 4. Delete the write access breakpoint and create a new one for writes in the ```2000-3FFF``` range. This will cause the debugger to stop when a new ROM bank is selected.  
 
@@ -65,13 +65,13 @@ The process below is for a standard game.  Some games might be a bit more compli
    If there isn't space available in bank 0 and the game uses a standard joypad read function, then you can overwrite the joypad function with a call to our own joypad read function in a different bank. The .ORG value from step 8 and SIZE will need to be updated to point to the start of the original joypad read function and the size of the original joypad read function.  Change the joypad read section to do this:
 
    ```
-   .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+   .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.s"
    ret
    ```
 
    and then add the joypad read and check into save/load state section:
 
-   ```.INCLUDE "includes/joypad_read_and_check.asm"```
+   ```.INCLUDE "includes/joypad_read_and_check.s"```
 
    See the Speedball 2 patch for an example.
 
@@ -103,7 +103,7 @@ The process below is for a standard game.  Some games might be a bit more compli
 
 13. Run the script to create the patch from the ```/src``` directory.
 
-    e.g. ```./create-bsdiff-patch game.gb.asm```
+    e.g. ```./create-bsdiff-patch game.gb.s```
 
 	  The patched ROM will be stored in the ```/patched-roms``` directory and the .bsdiff patch file will be stored in the ```/patches``` directory.
 

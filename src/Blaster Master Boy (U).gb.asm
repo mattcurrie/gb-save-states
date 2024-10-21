@@ -1,43 +1,37 @@
 ; md5 c4868bf46a993b4c33a9a8af5341282a
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Blaster Master Boy (U).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Blaster Master Boy (U).gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ffe1
-.DEFINE joypad_2 $ffe2
-.DEFINE current_rom_bank $c102
+DEF joypad EQU $ffe1
+DEF joypad_2 EQU $ffe2
+DEF current_rom_bank EQU $c102
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $03be
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$03be] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     jp $03ee
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0008 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$0008] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

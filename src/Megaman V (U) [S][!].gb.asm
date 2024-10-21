@@ -1,67 +1,58 @@
 ; md5 ceb17d831b410d91aa41bf2819cbed82
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 32
-.BACKGROUND "Megaman V (U) [S][!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 32
+; ROM "Megaman V (U) [S][!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $de91
-.DEFINE joypad_2 $de92
-.DEFINE current_rom_bank $df00
-.DEFINE current_nr34_value $dc7b
+DEF joypad EQU $de91
+DEF joypad_2 EQU $de92
+DEF current_rom_bank EQU $df00
+DEF current_nr34_value EQU $dc7b
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $0023
-.SECTION "call mbc1 fix" SIZE 3 OVERWRITE
+SECTION "call mbc1 fix", ROM0[$0023] ; length: 3
     call mbc1_on_mbc5_fix
-.ENDS
+ENDSECTION
 
-.ORG $3f80
-.SECTION "relocated read from joypad" SIZE $80 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
+SECTION "relocated read from joypad", ROM0[$3f80] ; length: $80
+    INCLUDE "includes/relocated_read_from_joypad.asm"
 
-    ; prevent selecting rom bank 0 
+    ; prevent selecting rom bank 0
     mbc1_on_mbc5_fix:
-        push af                    
-        or a                   
+        push af
+        or a
         jr nz,mbc1_on_mbc5_fix_skip
-        inc a                      
-    mbc1_on_mbc5_fix_skip:    
-        ld ($2100),a               
-        pop af                     
-        ret   
-.ENDS
+        inc a
+    mbc1_on_mbc5_fix_skip:
+        ld [$2100],a
+        pop af
+        ret
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $18ba
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+SECTION "joypad read", ROM0[$18ba] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $01 SLOT 1
-.ORG $3d80
-.SECTION "save/load state" SIZE $280 OVERWRITE
-    .DB "--- Megaman 5 Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7D80], BANK[$01] ; length: $280
+    DB "--- Megaman 5 Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

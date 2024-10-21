@@ -1,42 +1,36 @@
 ; md5 66fc892b9682e8e2981fa83fa681ccad
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Hit the Ice (UE) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Hit the Ice (UE) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $c5e9
-.DEFINE current_rom_bank $c5a1
+DEF joypad EQU $c5e9
+DEF current_rom_bank EQU $c5a1
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $0bfe
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$0bfe] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0004 SLOT 1
-.ORG $372a
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$772A], BANK[$0004] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

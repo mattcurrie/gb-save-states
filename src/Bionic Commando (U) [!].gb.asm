@@ -1,53 +1,45 @@
 ; md5 f89a33de3fa660a13ec29bb323efffa9
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Bionic Commando (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Bionic Commando (U) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $c0c0
-.DEFINE joypad_2 $c0c1
-.DEFINE current_rom_bank $c0d3
-.DEFINE current_nr34_value $c47a
-.DEFINE restore_sound 1
+DEF joypad EQU $c0c0
+DEF joypad_2 EQU $c0c1
+DEF current_rom_bank EQU $c0d3
+DEF current_nr34_value EQU $c47a
+DEF restore_sound EQU 1
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $3f00
-.SECTION "relocated read from joypad" SIZE $ff OVERWRITE
-    .DEFINE interrupts_already_disabled 1
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$3f00] ; length: $ff
+    DEF interrupts_already_disabled EQU 1
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $0aef
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$0aef] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0f SLOT 1
-.ORG $3d00
 
-.SECTION "save/load state" SIZE $300 OVERWRITE
-    .DB "--- Bionic Commando Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7D00], BANK[$0f] ; length: $300
+    DB "--- Bionic Commando Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

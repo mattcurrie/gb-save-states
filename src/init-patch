@@ -30,7 +30,7 @@ fi
 
 rom_basename=${rom_path##*/}
 original_rom_path="${original_roms_dir}/${rom_basename}"
-sourcefile="${rom_basename}.asm"
+sourcefile="${rom_basename}.s"
 
 if [[ -e $sourcefile ]] ; then
     abort "${sourcefile} already exists."
@@ -50,7 +50,7 @@ rom_banks=$((`du -k "${original_rom_path}" | cut -f 1` / 16))
 echo "ROM has ${rom_banks} banks"
 
 echo "Generating \"${sourcefile}\"..."
-cat _template.asm | sed "s/insert-rom-file-name/${rom_basename}/" | sed "s/insert-md5-hash/${original_rom_md5}/" | sed "s/insert-number-of-banks/${rom_banks}/" > "${sourcefile}"
+cat _template.s | sed "s/insert-rom-file-name/${rom_basename}/" | sed "s/insert-md5-hash/${original_rom_md5}/" | sed "s/insert-number-of-banks/${rom_banks}/" > "${sourcefile}"
 
 
 echo "Done!"

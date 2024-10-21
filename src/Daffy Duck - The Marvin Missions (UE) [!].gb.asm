@@ -1,38 +1,34 @@
 ; md5 f1dbc21b1b8f8dcbe9a15bc9ef68fb9c
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Daffy Duck - The Marvin Missions (UE) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Daffy Duck - The Marvin Missions (UE) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $ffa0
+DEF current_rom_bank EQU $ffa0
 
 
 ;**********
 ;* vblank *
 ;**********
 
-.DEFINE vblank_handler $0079
-.DEFINE original_vblank_handler $0719
-.INCLUDE "includes/vblank_handler.asm"
+DEF vblank_handler EQU $0079
+DEF original_vblank_handler EQU $0719
+INCLUDE "includes/vblank_handler.asm"
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0006 SLOT 1
-.ORG $3cc8
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7CC8], BANK[$0006] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

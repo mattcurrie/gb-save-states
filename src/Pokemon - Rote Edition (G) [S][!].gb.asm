@@ -1,132 +1,97 @@
 ; md5 8ed0e8d45a81ca34de625d930148a512
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 64
-.BACKGROUND "Pokemon - Rote Edition (G) [S][!].gb"
-.INCLUDE "includes/header.asm"
-
+; ROMBANKS 64
+; ROM "Pokemon - Rote Edition (G) [S][!].gb"
 
 ; config
-.DEFINE current_rom_bank $ffb8
-.DEFINE game_uses_save_ram 1
-.DEFINE current_sram_bank $fffd
-.DEFINE uses_mbc5 1
+DEF current_rom_bank EQU $ffb8
+DEF game_uses_save_ram EQU 1
+DEF current_sram_bank EQU $fffd
+DEF uses_mbc5 EQU 1
 
 
 ; track current sram bank
-.BANK $0000 SLOT 0
-.ORG $0001
-.SECTION "set sram bank" SIZE $0007 OVERWRITE
+SECTION "set sram bank", ROM0[$0001] ; length: $0007
 set_sram_bank:
-    ld (current_sram_bank), a
-    ld ($4000), a
+    ld [current_sram_bank], a
+    ld [$4000], a
     ret
-.ENDS
+ENDSECTION
 
-.ORG $250d
-.SECTION "call set sram bank 1" SIZE $3 OVERWRITE
+SECTION "call set sram bank 1", ROM0[$250d] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $169d
-.SECTION "call set sram bank 2" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 2", ROM0[$169d] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $16eb
-.SECTION "call set sram bank 3" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 3", ROM0[$16eb] ; length: $3
     call set_sram_bank
-.ENDS
-
-.BANK $0001 SLOT 1
-.ORG $20cf
-.SECTION "call set sram bank 4" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 4", ROMX[$60CF], BANK[$0001] ; length: $3
     call set_sram_bank
-.ENDS
-
-.BANK $001c SLOT 1
-.ORG $3607
-.SECTION "call set sram bank 5" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 5", ROMX[$7607], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $3674
-.SECTION "call set sram bank 6" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 6", ROMX[$7674], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $36a1
-.SECTION "call set sram bank 7" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 7", ROMX[$76A1], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $376f
-.SECTION "call set sram bank 8" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 8", ROMX[$776F], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $37c5
-.SECTION "call set sram bank 9" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 9", ROMX[$77C5], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $37f2
-.SECTION "call set sram bank 10" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 10", ROMX[$77F2], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $38f3
-.SECTION "call set sram bank 11" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 11", ROMX[$78F3], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $3a0e
-.SECTION "call set sram bank 12" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 12", ROMX[$7A0E], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $3a16
-.SECTION "call set sram bank 13" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 13", ROMX[$7A16], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $3a6d
-.SECTION "call set sram bank 14" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 14", ROMX[$7A6D], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $3a75
-.SECTION "call set sram bank 15" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 15", ROMX[$7A75], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $3ab4
-.SECTION "call set sram bank 16" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 16", ROMX[$7AB4], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $3b35
-.SECTION "call set sram bank 17" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 17", ROMX[$7B35], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-.ORG $3b68
-.SECTION "call set sram bank 18" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 18", ROMX[$7B68], BANK[$001c] ; length: $3
     call set_sram_bank
-.ENDS
-
-.BANK $000f SLOT 1
-.ORG $2cef
-.SECTION "call set sram bank 19" SIZE $3 OVERWRITE
+ENDSECTION
+SECTION "call set sram bank 19", ROMX[$6CEF], BANK[$000f] ; length: $3
     call set_sram_bank
-.ENDS
+ENDSECTION
 
 
 ; joypad
-.DEFINE joypad $fff8
+DEF joypad EQU $fff8
 
-.BANK $0000 SLOT 0
-.ORG $00bf
-.SECTION "relocated read from joypad" SIZE $0040 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$00bf] ; length: $0040
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $0195
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$0195] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0001 SLOT 1
-.ORG $3c4a
-.SECTION "save/load state" SIZE $0260 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7C4A], BANK[$0001] ; length: $0260
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

@@ -1,52 +1,44 @@
 ; md5 2eb9a6891fc79cd878d8bc12d04a0790
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Dynablaster (E) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Dynablaster (E) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff00+$8a
-.DEFINE joypad_2 $ff00+$8b
-.DEFINE current_rom_bank $ff00+$c6
-.DEFINE current_nr34_value $d82a
+DEF joypad EQU $ff00+$8a
+DEF joypad_2 EQU $ff00+$8b
+DEF current_rom_bank EQU $ff00+$c6
+DEF current_nr34_value EQU $d82a
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $0080
-.SECTION "relocated read from joypad" SIZE $70 OVERWRITE
-    .DEFINE preserve_registers 1
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0080] ; length: $70
+    DEF preserve_registers EQU 1
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $04d3
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+SECTION "joypad read", ROM0[$04d3] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $01 SLOT 1
-.ORG $1000
-.SECTION "save/load state" SIZE $500 OVERWRITE
-    .DB "--- Dynablaster Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$5000], BANK[$01] ; length: $500
+    DB "--- Dynablaster Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

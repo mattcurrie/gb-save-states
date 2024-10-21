@@ -1,41 +1,34 @@
 ; md5 f94f61e6beaec6222e0d35229e2e271e
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Balloon Fight GB (J) [C][!].gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Balloon Fight GB (J) [C][!].gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $ffca
-.DEFINE game_uses_save_ram 1
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $ffca
+DEF game_uses_save_ram EQU 1
+DEF uses_mbc5 EQU 1
 
 
 ; joypad
-.DEFINE joypad $ffa0
+DEF joypad EQU $ffa0
 
-.BANK $0000 SLOT 0
-.ORG $0062
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0062] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $0b72
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$0b72] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0000 SLOT 0
-.ORG $3cd3
-.SECTION "save/load state" SIZE $0300 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROM0[$3cd3] ; length: $0300
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

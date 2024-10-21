@@ -1,66 +1,56 @@
 ; md5 ccaf9331318d4dfe3d1ee681928a74fd
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Mario's Picross (UE) [S][!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Mario's Picross (UE) [S][!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $c312
-.DEFINE game_uses_save_ram 1
+DEF current_rom_bank EQU $c312
+DEF game_uses_save_ram EQU 1
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0150
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0150
 
-.ORG $00a5
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$00a5] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;**********
 ;* joypad *
 ;**********
 
-.DEFINE joypad $c31a
+DEF joypad EQU $c31a
 
-.BANK $0000 SLOT 0
-.ORG $0064
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0064] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $06f6
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$06f6] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0000 SLOT 0
-.ORG $3250
-.SECTION "save/load state" SIZE $0245 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROM0[$3250] ; length: $0245
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

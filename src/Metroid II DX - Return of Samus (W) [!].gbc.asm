@@ -1,42 +1,35 @@
 ; md5 57032a17c7e6aa00eb8e064a87279898
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 32
-.BACKGROUND "Metroid II DX - Return of Samus (W) [!].gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 32
+; ROM "Metroid II DX - Return of Samus (W) [!].gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $d04e
-.DEFINE game_uses_save_ram 1
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $d04e
+DEF game_uses_save_ram EQU 1
+DEF uses_mbc5 EQU 1
 
 
 ; joypad
-.DEFINE joypad $ff80
-.DEFINE joypad_2 $ff81
+DEF joypad EQU $ff80
+DEF joypad_2 EQU $ff81
 
-.BANK $0000 SLOT 0
-.ORG $009e
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$009e] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $22b7
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$22b7] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0001 SLOT 1
-.ORG $3b88
-.SECTION "save/load state" SIZE $0295 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7B88], BANK[$0001] ; length: $0295
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

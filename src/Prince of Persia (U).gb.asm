@@ -1,48 +1,41 @@
 ; md5 80034da43f35307291714ae2553d9ddf
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Prince of Persia (U).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Prince of Persia (U).gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff8b
-.DEFINE joypad_2 $ff8c
-.DEFINE current_rom_bank $7fff
+DEF joypad EQU $ff8b
+DEF joypad_2 EQU $ff8c
+DEF current_rom_bank EQU $7fff
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $1167
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$1167] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0008 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$0008] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
-.ORG $3fff
-.SECTION "new bank" SIZE 1 OVERWRITE
-    .DB $8
-.ENDS
+SECTION "new bank", ROMX[$7FFF], BANK[$0008] ; length: 1
+    DB $8
+ENDSECTION
 
 
 ; Generated with patch-builder.py

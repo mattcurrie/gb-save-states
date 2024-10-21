@@ -2,46 +2,43 @@
 ;* vblank *
 ;**********
 
-.DEFINE calling_from_vblank 1
-.DEFINE interrupts_already_disabled 1
-.DEFINE already_changed_rom_bank 1
+DEF calling_from_vblank EQU 1
+DEF interrupts_already_disabled EQU 1
+DEF already_changed_rom_bank EQU 1
 
-.DEFINE joypad $BFE8
-.DEFINE joypad_2 $BFE9
+DEF joypad EQU $BFE8
+DEF joypad_2 EQU $BFE9
 
-.BANK $00 SLOT 0
-.ORG $0040
-.SECTION "vblank" SIZE $8 OVERWRITE
+SECTION "vblank", ROM0[$0040] ; length: $8
     
     push af
 
     ; select the joypad buttons
     ld a,$10
-    ldh ($00),a
+    ldh [$00],a
 
     jp vblank_handler
 
-.ENDS
+ENDSECTION
 
-.ORG vblank_handler
-.SECTION "vblank handler" SIZE $22 OVERWRITE
+SECTION "vblank handler", ROM0[vblank_handler] ; length: $22
 
-    .IFDEF current_rom_bank
+    IF DEF(current_rom_bank)
         ; change the rom bank while waiting for joypad lines to settle
        
         ; save current ROM bank
-        .IFNDEF should_detect_rom_bank
-            ld a,(current_rom_bank)
-        .ELSE
+        IF !DEF(should_detect_rom_bank)
+            ld a,[current_rom_bank]
+        ELSE
             detect_rom_bank
-        .ENDIF
+        ENDC
         push af
 
         ; set the required rom bank
-        ld a,:relocated_read_from_joypad
-        ld ($2000),a
+        ld a,BANK(relocated_read_from_joypad)
+        ld [$2000],a
 
-    .ELSE
+    ELSE
 
         ; wait for joypad lines to settle
         push hl
@@ -49,38 +46,38 @@
         push hl
         pop hl
 
-    .ENDIF
+    ENDC
 
     ; read joypad and check for start or select being pressed
-    ldh a,($00)
+    ldh a,[$00]
     cpl
     and $0c
     call nz,relocated_read_from_joypad
 
 
-    .IFDEF current_rom_bank
+    IF DEF(current_rom_bank)
         ; restore previous ROM bank
         pop af
-        ld ($2000),a
-    .ENDIF
+        ld [$2000],a
+    ENDC
 
     ; reset joypad
     ld a,$30
-    ldh ($00),a
+    ldh [$00],a
 
     pop af
 
-.IFDEF original_vblank_handler_pushes
+IF DEF(original_vblank_handler_pushes)
     
-    .DB original_vblank_handler_pushes
+    original_vblank_handler_pushes_macro
 
-.ENDIF
+ENDC
 
-.IFDEF use_call_for_original_vblank_handler
+IF DEF(use_call_for_original_vblank_handler)
     call original_vblank_handler
-.ELSE
+ELSE
     jp original_vblank_handler
-.ENDIF
+ENDC
 
 
-.ENDS
+ENDSECTION

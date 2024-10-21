@@ -1,43 +1,37 @@
 ; md5 02a6e150efc50f481042fd542023a550
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Rodland (U).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Rodland (U).gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $c101
-.DEFINE joypad_2 $c102
-.DEFINE current_rom_bank $c1ce
+DEF joypad EQU $c101
+DEF joypad_2 EQU $c102
+DEF current_rom_bank EQU $c1ce
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $00c8
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$00c8] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0004 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$0004] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

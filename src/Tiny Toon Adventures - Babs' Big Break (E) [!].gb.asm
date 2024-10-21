@@ -1,48 +1,40 @@
 ; md5 cbb45188c780ce5bbdf502ceb2b9994a
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Tiny Toon Adventures - Babs' Big Break (E) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Tiny Toon Adventures - Babs' Big Break (E) [!].gb"
 
 
 ; config
-.DEFINE current_rom_bank $015a
-.DEFINE calling_from_vblank 1
-.DEFINE already_changed_rom_bank 1
-.DEFINE interrupts_already_disabled 1
+DEF current_rom_bank EQU $015a
+DEF calling_from_vblank EQU 1
+DEF already_changed_rom_bank EQU 1
+DEF interrupts_already_disabled EQU 1
 
 
 ; joypad
-.DEFINE joypad $c986
-.DEFINE joypad_2 $c987
-.DEFINE swap_joypad 1
+DEF joypad EQU $c986
+DEF joypad_2 EQU $c987
+DEF swap_joypad EQU 1
 
-.BANK $0000 SLOT 0
-.ORG $00f1
-.SECTION "call relocated read from joypad in other bank part" SIZE 14 OVERWRITE
+SECTION "call relocated read from joypad in other bank part", ROM0[$00f1] ; length: 14
 invoke_relocated_read_from_joypad_in_other_bank:
-    ld a,:relocated_read_from_joypad
-    ld ($2000),a
+    ld a,BANK(relocated_read_from_joypad)
+    ld [$2000],a
     call relocated_read_from_joypad
     ld a, 1         ; joypad read function is in bank 1
-    ld ($2000),a
+    ld [$2000],a
     ret
-.ENDS
+ENDSECTION
 
-.BANK $0001 SLOT 1
-.ORG $0209
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROMX[$4209], BANK[$0001] ; length: 4
     call invoke_relocated_read_from_joypad_in_other_bank
     nop
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0003 SLOT 1
-.ORG $3d19
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7D19], BANK[$0003] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

@@ -5,44 +5,44 @@
 ; function to check  whether any of button combos are pressed.
 ;
 ; The following defines are required:
-; .DEFINE joypad $ff00+$8b
+; DEF joypad EQU $ff00+$8b
 ;
 ; Optional:
-; .DEFINE current_rom_bank $7fff
-; .DEFINE joypad_2 $ff00+$8c
-; .DEFINE joypad_3 $ff00+$8d
-; .DEFINE swap_joypad 1
-; .DEFINE cpl_joypad 1
-; .DEFINE joypad_debounce 1
-; .DEFINE joypad_read_already_finished 1
-; .DEFINE dont_save_interrupt_flags 1
-; .DEFINE preserve_registers 1
-; .DEFINE interrupts_already_disabled 1
-; .DEFINE already_changed_rom_bank 1
+; DEF current_rom_bank EQU $7fff
+; DEF joypad_2 EQU $ff00+$8c
+; DEF joypad_3 EQU $ff00+$8d
+; DEF swap_joypad EQU 1
+; DEF cpl_joypad EQU 1
+; DEF joypad_debounce EQU 1
+; DEF joypad_read_already_finished EQU 1
+; DEF dont_save_interrupt_flags EQU 1
+; DEF preserve_registers EQU 1
+; DEF interrupts_already_disabled EQU 1
+; DEF already_changed_rom_bank EQU 1
 ;
 ;***************************************************************************
 
 relocated_read_from_joypad:
 
 
-.IFDEF joypad_debounce
+IF DEF(joypad_debounce)
     ld c,a           
-    ld a,(joypad)
+    ld a,[joypad]
     xor c            
     and c            
-    ld (joypad_2),a     
+    ld [joypad_2],a     
     ld a,c           
-    ld (joypad),a
-.ENDIF
+    ld [joypad],a
+ENDC
 
 
-.IFNDEF joypad_read_already_finished
+IF !DEF(joypad_read_already_finished)
     ; finish off the joypad function
     ld a,$30
-    ld ($ff00+$00),a
-.ENDIF
+    ldh [$ff00+$00],a
+ENDC
 
-.INCLUDE "includes/joypad_check.asm"
+INCLUDE "includes/joypad_check.asm"
 
     ret
 

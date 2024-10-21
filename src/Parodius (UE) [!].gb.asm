@@ -1,56 +1,48 @@
 ; md5 c94afb46cada0118aa8ff08cc07749a4
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Parodius (UE) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Parodius (UE) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $cb86
-.DEFINE joypad_2 $cb87
-.DEFINE swap_joypad 1
-.DEFINE current_rom_bank $7fff
-.DEFINE current_nr34_value $c1b6
+DEF joypad EQU $cb86
+DEF joypad_2 EQU $cb87
+DEF swap_joypad EQU 1
+DEF current_rom_bank EQU $7fff
+DEF current_nr34_value EQU $c1b6
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $00a0
-.SECTION "will read from joypad" SIZE $60 OVERWRITE
+SECTION "will read from joypad", ROM0[$00a0] ; length: $60
     will_read_from_joypad:
         call $4087
-        .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+        INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
         ret
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $02fd
-.SECTION "joypad read" SIZE 3 OVERWRITE   
+SECTION "joypad read", ROM0[$02fd] ; length: 3
     call will_read_from_joypad
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0e SLOT 1
-.ORG $3d10
-.SECTION "save/load state" SIZE $25f OVERWRITE
-; no space    .DB "--- Parodius Save Patch ---"
-    .DEFINE joypad_read_already_finished 1
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7D10], BANK[$0e] ; length: $25f
+; no space    DB "--- Parodius Save Patch ---"
+    DEF joypad_read_already_finished EQU 1
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

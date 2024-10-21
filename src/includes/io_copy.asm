@@ -14,8 +14,8 @@
 IO_COPY:
     ld e, l
 io_copy_loop:
-    ld a, (hl+)
-    ld (de), a
+    ld a, [hl+]
+    ld [de], a
     inc e                       
     dec c
     jr nz, io_copy_loop

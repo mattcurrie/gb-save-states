@@ -1,59 +1,49 @@
 ; md5 e12c5c2897ed095f8d26c7578afddfda
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Ninja Gaiden Shadow (U).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Ninja Gaiden Shadow (U).gb"
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0150
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0150
 
-.ORG $00a3
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$00a3] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;**********
 ;* joypad *
 ;**********
 
-.DEFINE joypad $ffe3
-.DEFINE joypad_2 $ffe4
+DEF joypad EQU $ffe3
+DEF joypad_2 EQU $ffe4
 
-.BANK $0000 SLOT 0
-.ORG $0062
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0062] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $0a1d
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$0a1d] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0000 SLOT 0
-.ORG $2ad0
-.SECTION "save/load state" SIZE $0220 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROM0[$2ad0] ; length: $0220
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

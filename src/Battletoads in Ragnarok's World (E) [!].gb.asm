@@ -1,48 +1,41 @@
 ; md5 bc76c0516129c6791e4087f93f5d3c99
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Battletoads in Ragnarok's World (E) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Battletoads in Ragnarok's World (E) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ca03
-.DEFINE joypad_2 $ca01
-.DEFINE current_rom_bank $4000
+DEF joypad EQU $ca03
+DEF joypad_2 EQU $ca01
+DEF current_rom_bank EQU $4000
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $2e5e
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$2e5e] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     jp $2e91
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0008 SLOT 1
-.ORG $0001
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4001], BANK[$0008] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
-.ORG $0000
-.SECTION "new bank" SIZE 1 OVERWRITE
-    .DB $8
-.ENDS
+SECTION "new bank", ROMX[$4000], BANK[$0008] ; length: 1
+    DB $8
+ENDSECTION
 
 
 ; Generated with patch-builder.py

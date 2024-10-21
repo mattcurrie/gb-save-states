@@ -1,52 +1,44 @@
 ; md5 24a6b4457a511cc667e9ac25417401ab
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Kid Dracula (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Kid Dracula (U) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $c9c6
-.DEFINE joypad_2 $c9c7
-.DEFINE swap_joypad 1
-.DEFINE current_rom_bank $7fff
-.DEFINE current_nr34_value $c7ed
+DEF joypad EQU $c9c6
+DEF joypad_2 EQU $c9c7
+DEF swap_joypad EQU 1
+DEF current_rom_bank EQU $7fff
+DEF current_nr34_value EQU $c7ed
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $3f00
-.SECTION "relocated read from joypad" SIZE $d0 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$3f00] ; length: $d0
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $0537
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+SECTION "joypad read", ROM0[$0537] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $03 SLOT 1
-.ORG $3d00
-.SECTION "save/load state" SIZE $2fe OVERWRITE
-    .DB "--- Kid Dracula Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7D00], BANK[$03] ; length: $2fe
+    DB "--- Kid Dracula Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

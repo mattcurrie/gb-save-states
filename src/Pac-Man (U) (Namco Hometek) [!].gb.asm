@@ -1,44 +1,37 @@
 ; md5 f6b898bfaa367ac1b0782a363cd098c7
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 4
-.BACKGROUND "Pac-Man (U) (Namco Hometek) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 4
+; ROM "Pac-Man (U) (Namco Hometek) [!].gb"
 
 
 ; config
-.DEFINE current_rom_bank $d600
+DEF current_rom_bank EQU $d600
 
 
 ; reset ram
-.DEFINE RESET_RAM_DONE $0867
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0867
 
-.ORG $00d4
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$00d4] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ; vblank
-.DEFINE vblank_handler $0004
-.DEFINE original_vblank_handler $03bb
-.INCLUDE "includes/vblank_handler.asm"
+DEF vblank_handler EQU $0004
+DEF original_vblank_handler EQU $03bb
+INCLUDE "includes/vblank_handler.asm"
 
 
 ; save/load state
-.BANK $0000 SLOT 0
-.ORG $3381
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROM0[$3381] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

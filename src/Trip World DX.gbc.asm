@@ -1,42 +1,35 @@
 ; md5 fb04c5e00adcbf031bd1971e68a6bca5
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 32
-.BACKGROUND "Trip World DX.gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 32
+; ROM "Trip World DX.gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $ff9b
-.DEFINE game_uses_save_ram 1
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $ff9b
+DEF game_uses_save_ram EQU 1
+DEF uses_mbc5 EQU 1
 
 
 ; joypad
-.DEFINE joypad $ff8b
-.DEFINE joypad_2 $ff8c
+DEF joypad EQU $ff8b
+DEF joypad_2 EQU $ff8c
 
-.BANK $0000 SLOT 0
-.ORG $0062
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0062] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $26b2
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$26b2] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0002 SLOT 1
-.ORG $2b61
-.SECTION "save/load state" SIZE $0295 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$6B61], BANK[$0002] ; length: $0295
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

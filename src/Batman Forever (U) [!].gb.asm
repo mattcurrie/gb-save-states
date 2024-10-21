@@ -1,56 +1,49 @@
 ; md5 28737a5c760938a9746fa9e1a2fcefc6
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 32
-.BACKGROUND "Batman Forever (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 32
+; ROM "Batman Forever (U) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $d89d
+DEF current_rom_bank EQU $d89d
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0068
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0068
 
-.ORG $00d7
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$00d7] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;**********
 ;* vblank *
 ;**********
 
-.DEFINE vblank_handler $00b4
-.DEFINE original_vblank_handler $06a6
-.INCLUDE "includes/vblank_handler.asm"
+DEF vblank_handler EQU $00b4
+DEF original_vblank_handler EQU $06a6
+INCLUDE "includes/vblank_handler.asm"
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0010 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$0010] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

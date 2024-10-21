@@ -26,7 +26,7 @@ if [[ ! -e $sourcefile ]] ; then
 fi
 
 sourcefile_basename=${sourcefile##*/}
-original_rom_filename=${sourcefile_basename%.*}
+original_rom_filename=$(sed -n 's/^; ROM "\(.*\)"/\1/p' "$sourcefile")
 original_rom_path="../original-roms/${original_rom_filename}"
 
 if [[ ! -e $original_rom_path ]] ; then
@@ -50,28 +50,8 @@ echo $original_rom_md5 > "${original_rom_checksum_path}"
 cp "${original_rom_path}" "${original_rom_filename}"
 
 
-# check if the original rom file size needs padding (required for use of wla's .BACKGROUND directive)
-rombanks_directive=(`grep .ROMBANKS "${sourcefile}"`)
-expected_file_size=$((rombanks_directive[1] * 16384))
-actual_file_size=$((`du -k "${original_rom_path}" | cut -f 1` * 1024))
-
-if [[ $actual_file_size -ne $expected_file_size ]]; then
-    echo "Padding ROM to ${expected_file_size} bytes..."
-
-    count=$((expected_file_size/1024))
-
-    # create file of the correct size filled with 0xff bytes
-    dd if=/dev/zero ibs=1024 count=${count} of=padded.gb >& /dev/null
-    perl -pi -e 's/\x00/\xff/g' padded.gb
-
-    # copy the rom on top of the padded file and move it into place
-    dd "if=${original_rom_path}" of=padded.gb conv=notrunc >& /dev/null
-    mv padded.gb "${original_rom_filename}"
-fi
-
-
 echo "Assembling patched ROM..."
-wla-gb -o "patched.o" "${sourcefile}"
+rgbasm -o "patched.o" "${sourcefile}"
 
 if [ $? -ne 0 ]; then
     rm "${original_rom_filename}"
@@ -79,27 +59,23 @@ if [ $? -ne 0 ]; then
 fi
 
 
-# create linkfile
-cat >linkfile <<EOL
-[objects]
-patched.o
-EOL
-
 echo "Linking patched ROM..."
-wlalink linkfile "patched.gb"
+rgblink -p0 -o "patched.gb" -O "${original_rom_path}" "patched.o"
 
 if [ $? -ne 0 ]; then
     rm patched.o
-    rm linkfile
     rm "${original_rom_filename}"
     abort "Error occurred linking patched ROM."
 fi
+
+echo "Fixing patched ROM..."
+rgbfix -p0 -v "patched.gb"
 
 echo "Creating patch..."
 bsdiff "${original_rom_path}" "patched.gb" "patch.bsdiff"
 
 # move results into place
-if [[ "${original_rom_filename}" == *.gbc ]]; then
+if grep "DEF is_cgb EQU 1" "${sourcefile}" >/dev/null; then
   cp patch.bsdiff "../patches/cgb/${original_rom_filename}.bsdiff"
 else
   cp patch.bsdiff "../patches/${original_rom_filename}.bsdiff"
@@ -109,7 +85,6 @@ mv patched.gb "../patched-roms/${original_rom_filename}"
 # clean up
 rm patch.bsdiff
 rm patched.o
-rm linkfile
 rm "${original_rom_filename}"
 
 echo "Done!"

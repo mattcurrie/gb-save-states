@@ -1,35 +1,29 @@
 ; md5 3574c3ae7c83faeb018cb1c05950c25d
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Gargoyle's Quest II - The Demon Darkness (English Translation patch).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Gargoyle's Quest II - The Demon Darkness (English Translation patch).gb"
 
 
 ; config
-.DEFINE current_rom_bank $ffc7
+DEF current_rom_bank EQU $ffc7
 
 
 ; joypad
-.DEFINE joypad $fffa
-.DEFINE joypad_2 $fffb
+DEF joypad EQU $fffa
+DEF joypad_2 EQU $fffb
 
-.BANK $0000 SLOT 0
-.ORG $2ff8
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$2ff8] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     jp $3028
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0005 SLOT 1
-.ORG $32db
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$72DB], BANK[$0005] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

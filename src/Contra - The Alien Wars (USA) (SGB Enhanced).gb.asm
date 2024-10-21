@@ -1,56 +1,47 @@
 ; md5 8d885e185ad2a0cb5c9e3b152bd24583
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Contra - The Alien Wars (USA) (SGB Enhanced).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Contra - The Alien Wars (USA) (SGB Enhanced).gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ffec
-.DEFINE joypad_2 $ffeb
-.DEFINE read_joypad_value_from_b_register 1
-.DEFINE current_rom_bank $ff8c
+DEF joypad EQU $ffec
+DEF joypad_2 EQU $ffeb
+DEF read_joypad_value_from_b_register EQU 1
+DEF current_rom_bank EQU $ff8c
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $6a
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE   
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
+SECTION "relocated read from joypad", ROM0[$6a] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
     ret
-.ENDS
+ENDSECTION
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $0744
-.SECTION "joypad read" SIZE 3 OVERWRITE   
+SECTION "joypad read", ROM0[$0744] ; length: 3
     call relocated_read_from_joypad
     ;nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $08 SLOT 1
-.ORG $0
-.SECTION "save/load state" SIZE $0220 OVERWRITE
-    .DB "--- XXXXX Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$08] ; length: $0220
+    DB "--- XXXXX Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
-.ORG $3fff
-.SECTION "bank 8" SIZE 1 OVERWRITE
-    .DB $8
-.ENDS
+SECTION "bank 8", ROMX[$7FFF], BANK[$08] ; length: 1
+    DB $8
+ENDSECTION

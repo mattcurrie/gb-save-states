@@ -56,35 +56,35 @@ PREPARE_FOR_SAVE_OR_LOAD:
 
     ; prepare for save or load
 
-.IFNDEF uses_mbc5
+IF !DEF(uses_mbc5)
     ld a,1                      ; set MBC1 mode to 4/32KB
-    ld ($6000),a
-.ENDIF
+    ld [$6000],a
+ENDC
 
     ld a,$0a  ; enable access to ram bank
-    ld (ram_access_toggle),a
+    ld [ram_access_toggle],a
 
-.IFDEF is_cgb
+IF DEF(is_cgb)
     ; wait for any in progress G/HDMA
     ; $ff in $ff55 indicates G/HDMA is complete
 dma_wait_loop:
-    ldh a, ($55)
+    ldh a, [$55]
     inc a
     jr nz, dma_wait_loop
-.ENDIF
+ENDC
 
 
 SCREEN_OFF:
     ld hl,$ff40
 SCREEN_OFF_LOOP:
-    ld a,($ff00+$44)
+    ldh a,[$ff00+$44]
     cp $90
     jr nz, SCREEN_OFF_LOOP
-    res 7,(hl)
+    res 7,[hl]
 
 
-    ld a,(SAVE_STATE_RAM_BANK)
-    ld (ram_bank_select),a
+    ld a,[SAVE_STATE_RAM_BANK]
+    ld [ram_bank_select],a
 
 
     ld a,c

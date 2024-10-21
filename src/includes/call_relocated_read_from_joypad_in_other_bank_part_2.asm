@@ -7,22 +7,21 @@
 
 invoke_relocated_read_from_joypad_in_other_bank_part_2:
 
-.IFDEF preserve_register_a
+IF DEF(preserve_register_a)
     ld a,b
-.ENDIF
+ENDC
 
     call relocated_read_from_joypad
 
-.IFDEF current_rom_bank
+IF DEF(current_rom_bank)
     ; restore previous ROM bank
     pop af
-    ld ($2000),a
-.ENDIF
+    ld [$2000],a
+ENDC
 
 
-.IFNDEF calling_from_vblank
+IF !DEF(calling_from_vblank)
     ; enable interrupts
     pop af
-    ld ($ff00+$ff),a
-.ENDIF
-
+    ld [$ff00+$ff],a
+ENDC

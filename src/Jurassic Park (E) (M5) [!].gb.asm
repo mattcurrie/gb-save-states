@@ -1,64 +1,54 @@
 ; md5 7173cecc94bcdb7aeb7240ae87491044
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Jurassic Park (E) (M5) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Jurassic Park (E) (M5) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff9c
-.DEFINE current_rom_bank $ff91
-.DEFINE swap_joypad 1
-.DEFINE current_nr34_value $decb
+DEF joypad EQU $ff9c
+DEF current_rom_bank EQU $ff91
+DEF swap_joypad EQU 1
+DEF current_nr34_value EQU $decb
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $0080
-.SECTION "relocated read from joypad" SIZE $70 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0080] ; length: $70
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $01d8
-.BANK $00 SLOT 0
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+DEF RESET_RAM_DONE EQU $01d8
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $15fc
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+SECTION "joypad read", ROM0[$15fc] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0e SLOT 1
-.ORG $0a00
-.SECTION "save/load state" SIZE $1000 OVERWRITE
-    .DB "--- Jurassic Park Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4A00], BANK[$0e] ; length: $1000
+    DB "--- Jurassic Park Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

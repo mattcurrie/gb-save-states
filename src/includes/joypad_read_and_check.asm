@@ -7,71 +7,71 @@
 
 relocated_read_from_joypad:
 
-.IFDEF calling_from_vblank
+IF DEF(calling_from_vblank)
 
     push bc
     push de
     push hl
 
     ld a,$0a  ; enable access to ram bank
-    ld (ram_access_toggle),a
+    ld [ram_access_toggle],a
 
     ; select the ram bank we need for writing the joypad value
-    ld a,(SAVE_STATE_RAM_BANK)
-    ld (ram_bank_select),a
+    ld a,[SAVE_STATE_RAM_BANK]
+    ld [ram_bank_select],a
 
-.ENDIF
-
-
-
-.INCLUDE "includes/joypad_read.s"      
+ENDC
 
 
-.IFDEF joypad_2
 
-    ld a,(joypad)
+INCLUDE "includes/joypad_read.asm"      
+
+
+IF DEF(joypad_2)
+
+    ld a,[joypad]
     xor c            
     and c            
-    ld (joypad_2),a     
-.IFDEF joypad_4
-    ld (joypad_4),a     
-.ENDIF
+    ld [joypad_2],a     
+IF DEF(joypad_4)
+    ld [joypad_4],a     
+ENDC
 
     ld a,c           
-.ENDIF    
+ENDC    
 
-.IFDEF joypad_3
-    ld (joypad_3),a     
-.ENDIF
+IF DEF(joypad_3)
+    ld [joypad_3],a     
+ENDC
 
-    ld (joypad),a     
+    ld [joypad],a     
     ld a,$30         
-    ld ($ff00+$00),a 
+    ld [$ff00+$00],a 
 
 
-.INCLUDE "includes/joypad_check.asm"
+INCLUDE "includes/joypad_check.asm"
 
 
-.IFDEF calling_from_vblank
+IF DEF(calling_from_vblank)
 
-    .IFDEF game_uses_save_ram
+    IF DEF(game_uses_save_ram)
         ; restore sram bank
-        .IFDEF current_sram_bank
-            ld a, (current_sram_bank)
-        .ELSE
+        IF DEF(current_sram_bank)
+            ld a, [current_sram_bank]
+        ELSE
             xor a
-        .ENDIF
-        ld (ram_bank_select),a
-    .ELSE
+        ENDC
+        ld [ram_bank_select],a
+    ELSE
         ; lock access to ram bank
         xor a  
-        ld (ram_access_toggle),a
-    .ENDIF
+        ld [ram_access_toggle],a
+    ENDC
 
     pop hl
     pop de
     pop bc
 
-.ENDIF
+ENDC
 
     ret

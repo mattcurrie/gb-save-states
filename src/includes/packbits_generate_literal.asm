@@ -3,10 +3,10 @@ PACKBITS_ENCODE_UNCOMPRESSED_OUTPUT:
     push de    ; save the end of source data address
 
     ; load the current output address from $BFFE into DE
-    ld a,(PACKBITS_CURRENT_OUTPUT_ADDRESS)
+    ld a,[PACKBITS_CURRENT_OUTPUT_ADDRESS]
     ld e,a
 
-    ld a,(PACKBITS_CURRENT_OUTPUT_ADDRESS + 1)
+    ld a,[PACKBITS_CURRENT_OUTPUT_ADDRESS + 1]
     ld d,a    
 
     push de   ; remember the original output address so can write the length to it later
@@ -14,7 +14,7 @@ PACKBITS_ENCODE_UNCOMPRESSED_OUTPUT:
 
     ld a,b  ; grab the previous byte and write it
     inc de
-    ld (de),a
+    ld [de],a
     inc de
 
 
@@ -26,10 +26,10 @@ PACKBITS_ENCODE_UNCOMPRESSED_LOOP:
     push de     ; save the current output address
 
     ; load the end input address from $BFFC into DE
-    ld a,(PACKBITS_INPUT_END_ADDRESS)   ; 16 clocks
+    ld a,[PACKBITS_INPUT_END_ADDRESS]   ; 16 clocks
     ld e,a         ; 4 clocks
 
-    ld a,(PACKBITS_INPUT_END_ADDRESS + 1)   ; 16 clocks
+    ld a,[PACKBITS_INPUT_END_ADDRESS + 1]   ; 16 clocks
     ld d,a         ; 4 clocks
 
 
@@ -49,16 +49,16 @@ PACKBITS_ENCODE_UNCOMPRESSED_LOOP:
 
         ; write the current output address from DE into $BFFE
         ld a,l
-        ld (PACKBITS_CURRENT_OUTPUT_ADDRESS),a
+        ld [PACKBITS_CURRENT_OUTPUT_ADDRESS],a
 
         ld a,h
-        ld (PACKBITS_CURRENT_OUTPUT_ADDRESS + 1),a
+        ld [PACKBITS_CURRENT_OUTPUT_ADDRESS + 1],a
 
         pop de   ; get the original output address so can write the length
 
         ld a,c
         dec a
-        ld (de),a     ; write the length - 1 byte
+        ld [de],a     ; write the length - 1 byte
 
         pop de    ; restore the end of source data address to DE
 
@@ -76,13 +76,13 @@ PACKBITS_ENCODE_UNCOMPRESSED_CONTINUE:
     jr z,PACKBITS_ENCODE_STOP_UNCOMPRESSED_OUTPUT    ; if 128 bytes long already then stop looping
 
  
-    ld a,(hl)
+    ld a,[hl]
     cp b
     jr z,PACKBITS_ENCODE_STOP_UNCOMPRESSED_OUTPUT_DUPE    ; if its the same byte then stop looping
 
 
     ; write the byte out then
-    ld (de),a   ; write the uncompressed data
+    ld [de],a   ; write the uncompressed data
     inc de
 
     ld b,a     ; update the previous byte to the new value
@@ -105,20 +105,19 @@ PACKBITS_ENCODE_STOP_UNCOMPRESSED_OUTPUT:
 
     ; write to the current output address from DE
     ld a,e
-    ld (PACKBITS_CURRENT_OUTPUT_ADDRESS),a
+    ld [PACKBITS_CURRENT_OUTPUT_ADDRESS],a
 
     ld a,d
-    ld (PACKBITS_CURRENT_OUTPUT_ADDRESS + 1),a
+    ld [PACKBITS_CURRENT_OUTPUT_ADDRESS + 1],a
 
     pop de   ; get the original output address so can write the length
 
     ld a,c
     dec a
-    ld (de),a     ; write the length byte
+    ld [de],a     ; write the length byte
 
 
 
     pop de    ; restore the end of source address to DE
 
     
-

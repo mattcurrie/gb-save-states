@@ -5,67 +5,66 @@
 ;
 ;***************************************************************************
 
-.IFNDEF do_not_disable_interrupts
-    .DEFINE interrupts_already_disabled 1
-.ENDIF
-.DEFINE already_changed_rom_bank 1
+IF !DEF(do_not_disable_interrupts)
+    DEF interrupts_already_disabled EQU 1
+ENDC
+DEF already_changed_rom_bank EQU 1
 
 
 invoke_relocated_read_from_joypad_in_other_bank:
 
 
-.IFDEF preserve_register_a
+IF DEF(preserve_register_a)
     ld b,a
-.ENDIF
+ENDC
 
 
-.IFNDEF calling_from_vblank
-.IFNDEF do_not_disable_interrupts
+IF !DEF(calling_from_vblank)
+IF !DEF(do_not_disable_interrupts)
     ; disable interrupts
-    ld a,($ff00+$ff)   
+    ldh a,[$ff00+$ff]   
     push af            
     xor a              
-    ld ($ff00+$ff),a   
-.ENDIF
-.ENDIF
+    ldh [$ff00+$ff],a   
+ENDC
+ENDC
 
-.IFDEF current_rom_bank
+IF DEF(current_rom_bank)
     ; save current ROM bank
-    .IFNDEF should_detect_rom_bank
-        ld a,(current_rom_bank)
-    .ELSE
+    IF !DEF(should_detect_rom_bank)
+        ld a,[current_rom_bank]
+    ELSE
         detect_rom_bank
-    .ENDIF
+    ENDC
     push af
 
-    ld a,:relocated_read_from_joypad
-    .IFDEF set_current_rom_bank
-        ld (current_rom_bank), a
-    .ENDIF
-    ld ($2000),a
-.ENDIF
+    ld a,BANK(relocated_read_from_joypad)
+    IF DEF(set_current_rom_bank)
+        ld [current_rom_bank],a
+    ENDC
+    ld [$2000],a
+ENDC
 
-.IFDEF preserve_register_a
+IF DEF(preserve_register_a)
     ld a,b
-.ENDIF
+ENDC
 
     call relocated_read_from_joypad
 
-.IFDEF current_rom_bank
+IF DEF(current_rom_bank)
     ; restore previous ROM bank
     pop af
-    .IFDEF set_current_rom_bank
-        ld (current_rom_bank), a
-    .ENDIF
-    ld ($2000),a
-.ENDIF
+    IF DEF(set_current_rom_bank)
+        ld [current_rom_bank],a
+    ENDC
+    ld [$2000],a
+ENDC
 
 
-.IFNDEF calling_from_vblank
-.IFNDEF do_not_disable_interrupts
+IF !DEF(calling_from_vblank)
+IF !DEF(do_not_disable_interrupts)
     ; enable interrupts
     pop af
-    ld ($ff00+$ff),a
-.ENDIF
-.ENDIF
-
+    ld [$ff00+$ff],a
+ENDC
+ENDC

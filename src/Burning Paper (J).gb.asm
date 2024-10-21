@@ -1,53 +1,45 @@
 ; md5 cb0a5d103c01d1d82d324602a45dd21b
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Burning Paper (J).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Burning Paper (J).gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ffb6
-.DEFINE joypad_2 $ffb8
-.DEFINE current_rom_bank $ffe3
-.DEFINE restore_wave_ram 1
+DEF joypad EQU $ffb6
+DEF joypad_2 EQU $ffb8
+DEF current_rom_bank EQU $ffe3
+DEF restore_wave_ram EQU 1
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $0080
-.SECTION "relocated read from joypad" SIZE $70 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "relocated read from joypad", ROM0[$0080] ; length: $70
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $01 SLOT 1
-.ORG $1d88
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+SECTION "joypad read", ROMX[$5D88], BANK[$01] ; length: 4
     call invoke_relocated_read_from_joypad_in_other_bank
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $7 SLOT 1
-.ORG $3000
-.SECTION "save/load state" SIZE $1000 OVERWRITE
-    .DB "--- Burning Paper Save Patch ---"
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7000], BANK[$7] ; length: $1000
+    DB "--- Burning Paper Save Patch ---"
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

@@ -1,47 +1,38 @@
 ; md5 dd5aa6e85827a3ce6e4b7500e75a3262
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Burai Fighter Deluxe (UE) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Burai Fighter Deluxe (UE) [!].gb"
 
 
 ; config
-.DEFINE current_rom_bank $0151
+DEF current_rom_bank EQU $0151
 
 
 ; joypad
-.DEFINE joypad $c0e3
-.DEFINE joypad_2 $c0e4
+DEF joypad EQU $c0e3
+DEF joypad_2 EQU $c0e4
 
-.BANK $0000 SLOT 0
-.ORG $00e9
-.SECTION "call relocated read from joypad in other bank part 1" SIZE 18 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank_part_1.asm"
-.ENDS
+SECTION "call relocated read from joypad in other bank part 1", ROM0[$00e9] ; length: 18
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank_part_1.asm"
+ENDSECTION
 
-.ORG $0062
-.SECTION "call relocated read from joypad in other bank part 2" SIZE 11 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank_part_2.asm"
+SECTION "call relocated read from joypad in other bank part 2", ROM0[$0062] ; length: 11
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank_part_2.asm"
     ret
-.ENDS
+ENDSECTION
 
-.BANK $0001 SLOT 1
-.ORG $089f
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROMX[$489F], BANK[$0001] ; length: 4
     call invoke_relocated_read_from_joypad_in_other_bank
     nop
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0004 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$0004] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

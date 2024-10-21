@@ -1,65 +1,55 @@
 ; md5 031e78c5067b88abe2870841d1125a29
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Pang (U).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Pang (U).gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff8e
-.DEFINE swap_joypad 1
-.DEFINE current_rom_bank $ff8d
+DEF joypad EQU $ff8e
+DEF swap_joypad EQU 1
+DEF current_rom_bank EQU $ff8d
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0195
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0195
 
-.ORG $00b7
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$00b7] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $0077
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0077] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $2d9d
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$2d9d] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0001 SLOT 1
-.ORG $2dbf
-.SECTION "save/load state" SIZE $220 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$6DBF], BANK[$0001] ; length: $220
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

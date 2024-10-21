@@ -1,51 +1,42 @@
 ; md5 ba760b6d4b96baf0fa2e7ad6e4498a95
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Nemesis II - The Return of the Hero (E) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Nemesis II - The Return of the Hero (E) [!].gb"
 
 
 ; config
-.DEFINE current_rom_bank $c7a4
+DEF current_rom_bank EQU $c7a4
 
 
 ; reset ram
-.DEFINE RESET_RAM_DONE $0150
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0150
 
-.ORG $00cf
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$00cf] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ; joypad
-.DEFINE joypad $c78e
-.DEFINE joypad_2 $c78f
-.DEFINE swap_joypad 1
+DEF joypad EQU $c78e
+DEF joypad_2 EQU $c78f
+DEF swap_joypad EQU 1
 
-.BANK $0000 SLOT 0
-.ORG $0ca8
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$0ca8] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0002 SLOT 1
-.ORG $3a21
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7A21], BANK[$0002] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

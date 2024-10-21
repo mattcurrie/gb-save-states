@@ -1,36 +1,30 @@
 ; md5 a8413347d5df8c9d14f97f0330d67bce
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 32
-.BACKGROUND "Super Mario Land 2 - 6 Golden Coins (UE) (V1.0) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 32
+; ROM "Super Mario Land 2 - 6 Golden Coins (UE) (V1.0) [!].gb"
 
 
 ; config
-.DEFINE current_rom_bank $a24e
-.DEFINE game_uses_save_ram 1
+DEF current_rom_bank EQU $a24e
+DEF game_uses_save_ram EQU 1
 
 
 ; joypad
-.DEFINE joypad $ff80
-.DEFINE joypad_2 $ff81
+DEF joypad EQU $ff80
+DEF joypad_2 EQU $ff81
 
-.BANK $0000 SLOT 0
-.ORG $1fd7
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$1fd7] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $000d SLOT 1
-.ORG $1cdb
-.SECTION "save/load state" SIZE $02c5 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$5CDB], BANK[$000d] ; length: $02c5
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

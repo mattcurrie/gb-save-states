@@ -1,45 +1,37 @@
 ; md5 119bdf89bdf38e489facd79cf251ccd0
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Super Mario Land DX (v2.0).gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Super Mario Land DX (v2.0).gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $0159
-.DEFINE game_uses_save_ram 1
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $0159
+DEF game_uses_save_ram EQU 1
+DEF uses_mbc5 EQU 1
 
 
 ; joypad
-.DEFINE joypad $ff80
-.DEFINE joypad_2 $ff81
+DEF joypad EQU $ff80
+DEF joypad_2 EQU $ff81
 
-.BANK $0000 SLOT 0
-.ORG $3fd0
-.SECTION "call relocated read from joypad in other bank" SIZE 26 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "call relocated read from joypad in other bank", ROM0[$3fd0] ; length: 26
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
-.BANK $0003 SLOT 1
-.ORG $081e
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROMX[$481E], BANK[$0003] ; length: 4
     call invoke_relocated_read_from_joypad_in_other_bank
     nop
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0004 SLOT 1
-.ORG $2bda
-.SECTION "save/load state" SIZE $0315 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$6BDA], BANK[$0004] ; length: $0315
+    DB "--- Save Patch ---"
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

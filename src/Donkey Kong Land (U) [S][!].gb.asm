@@ -1,49 +1,43 @@
 ; md5 89bb0d67d5af35c2ebf09d9aef2e34ad
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 64
-.BACKGROUND "Donkey Kong Land (U) [S][!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 64
+; ROM "Donkey Kong Land (U) [S][!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ca03
-.DEFINE joypad_2 $ca01
-.DEFINE current_rom_bank $4000
-.DEFINE preserve_registers 1
-.DEFINE game_uses_save_ram 1
-.DEFINE uses_mbc5 1
-.DEFINE restore_wave_ram 1
+DEF joypad EQU $ca03
+DEF joypad_2 EQU $ca01
+DEF current_rom_bank EQU $4000
+DEF preserve_registers EQU 1
+DEF game_uses_save_ram EQU 1
+DEF uses_mbc5 EQU 1
+DEF restore_wave_ram EQU 1
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $1d86
-.SECTION "joypad read" SIZE $32 OVERWRITE   
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$1d86] ; length: $32
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
 
-    ld a, ($ca03)
+    ld a, [$ca03]
     ld c,a
     jp $1db9
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $20 SLOT 1
-.ORG $0
-.SECTION "save/load state" SIZE $4000 OVERWRITE
-    .DB $20   ; rom bank number
+SECTION "save/load state", ROMX[$4000], BANK[$20] ; length: $4000
+    DB $20   ; rom bank number
 
-    .DB "--- Donkey Kong Land Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+    DB "--- Donkey Kong Land Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

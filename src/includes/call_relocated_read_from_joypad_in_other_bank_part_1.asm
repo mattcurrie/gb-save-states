@@ -5,33 +5,33 @@
 ;
 ;***************************************************************************
 
-.DEFINE interrupts_already_disabled 1
-.DEFINE already_changed_rom_bank 1
+DEF interrupts_already_disabled EQU 1
+DEF already_changed_rom_bank EQU 1
 
 
 invoke_relocated_read_from_joypad_in_other_bank:
 
 
-.IFDEF preserve_register_a
+IF DEF(preserve_register_a)
     ld b,a
-.ENDIF
+ENDC
 
 
-.IFNDEF calling_from_vblank
+IF !DEF(calling_from_vblank)
     ; disable interrupts
-    ld a,($ff00+$ff)   
+    ldh a,[$ff00+$ff]   
     push af            
     xor a              
-    ld ($ff00+$ff),a   
-.ENDIF
+    ldh [$ff00+$ff],a   
+ENDC
 
-.IFDEF current_rom_bank
+IF DEF(current_rom_bank)
     ; save current ROM bank
-    ld a,(current_rom_bank)
+    ld a,[current_rom_bank]
     push af
 
-    ld a,:relocated_read_from_joypad
-    ld ($2000),a
-.ENDIF
+    ld a,BANK(relocated_read_from_joypad)
+    ld [$2000],a
+ENDC
 
     jp invoke_relocated_read_from_joypad_in_other_bank_part_2

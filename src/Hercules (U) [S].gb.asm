@@ -1,43 +1,37 @@
 ; md5 abd4baa57f0b90b402c2e56090394f9e
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 32
-.BACKGROUND "Hercules (U) [S].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 32
+; ROM "Hercules (U) [S].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff8a
-.DEFINE joypad_2 $ff8b
-.DEFINE current_rom_bank $ff8f
+DEF joypad EQU $ff8a
+DEF joypad_2 EQU $ff8b
+DEF current_rom_bank EQU $ff8f
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $04bc
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$04bc] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     jp $04ec
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0002 SLOT 1
-.ORG $3624
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7624], BANK[$0002] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

@@ -1,56 +1,49 @@
 ; md5 bf4e4002ffa88b9be2c8b8a5b4cd9a48
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "International Superstar Soccer (U) [S].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "International Superstar Soccer (U) [S].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $c002
+DEF current_rom_bank EQU $c002
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0150
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0150
 
-.ORG $00cb
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$00cb] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;**********
 ;* vblank *
 ;**********
 
-.DEFINE vblank_handler $00a8
-.DEFINE original_vblank_handler $0068
-.INCLUDE "includes/vblank_handler.asm"
+DEF vblank_handler EQU $00a8
+DEF original_vblank_handler EQU $0068
+INCLUDE "includes/vblank_handler.asm"
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0000 SLOT 0
-.ORG $2bd2
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROM0[$2bd2] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

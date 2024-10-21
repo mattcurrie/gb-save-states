@@ -1,58 +1,51 @@
 ; md5 ec39462e39e3cbcabe03667fabf12d5a
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 128
-.BACKGROUND "Sabrina - The Animated Series - Zapped! (U) [C][!].gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 128
+; ROM "Sabrina - The Animated Series - Zapped! (U) [C][!].gbc"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $ff91
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $ff91
+DEF uses_mbc5 EQU 1
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0150
-.BANK $0000 SLOT 0
+DEF RESET_RAM_DONE EQU $0150
 
-.ORG $0027
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$0027] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;**********
 ;* vblank *
 ;**********
 
-.DEFINE vblank_handler $0004
-.DEFINE original_vblank_handler $084b
-.INCLUDE "includes/vblank_handler.asm"
+DEF vblank_handler EQU $0004
+DEF original_vblank_handler EQU $084b
+INCLUDE "includes/vblank_handler.asm"
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0000 SLOT 0
-.ORG $344c
-.SECTION "save/load state" SIZE $02d0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROM0[$344c] ; length: $02d0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

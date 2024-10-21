@@ -1,49 +1,41 @@
 ; md5 23c7be98ac9a4d3b046ad1be3f0965e4
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Kid Icarus - Of Myths and Monsters (UE) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Kid Icarus - Of Myths and Monsters (UE) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $c015
-.DEFINE joypad_2 $c016
-.DEFINE current_rom_bank $7fff
+DEF joypad EQU $c015
+DEF joypad_2 EQU $c016
+DEF current_rom_bank EQU $7fff
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $0080
-.SECTION "relocated read from joypad" SIZE $70 OVERWRITE
-    .INCLUDE "includes/joypad_read_and_check.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0080] ; length: $70
+    INCLUDE "includes/joypad_read_and_check.asm"
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $0308
-.SECTION "joypad read" SIZE 3 OVERWRITE   
+SECTION "joypad read", ROM0[$0308] ; length: 3
     jp relocated_read_from_joypad
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $01 SLOT 1
-.ORG $3d00
-.SECTION "save/load state" SIZE $2fe OVERWRITE
-    .DB "--- Kid Icarus Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7D00], BANK[$01] ; length: $2fe
+    DB "--- Kid Icarus Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

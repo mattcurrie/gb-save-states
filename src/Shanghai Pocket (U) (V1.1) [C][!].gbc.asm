@@ -1,44 +1,37 @@
 ; md5 f7e13de010decf104efa3db865971f34
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 64
-.BACKGROUND "Shanghai Pocket (U) (V1.1) [C][!].gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 64
+; ROM "Shanghai Pocket (U) (V1.1) [C][!].gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $d414
-.DEFINE uses_mbc5 1
-.DEFINE preserve_registers 1
-.DEFINE swap_joypad 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $d414
+DEF uses_mbc5 EQU 1
+DEF preserve_registers EQU 1
+DEF swap_joypad EQU 1
 
 
 ; joypad
-.DEFINE joypad $c0a4
+DEF joypad EQU $c0a4
 
-.BANK $0000 SLOT 0
-.ORG $00bf
-.SECTION "relocated read from joypad" SIZE $003f OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$00bf] ; length: $003f
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $3ad2
-.SECTION "joypad read" SIZE 8 OVERWRITE
-    ld (joypad), a
+SECTION "joypad read", ROM0[$3ad2] ; length: 8
+    ld [joypad], a
     call relocated_read_from_joypad
     nop
     nop
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0001 SLOT 1
-.ORG $2f81
-.SECTION "save/load state" SIZE $0270 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$6F81], BANK[$0001] ; length: $0270
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

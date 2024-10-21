@@ -1,42 +1,35 @@
 ; md5 f2dc6c4e093e4f8c6cbea80e8dbd62cb
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 64
-.BACKGROUND "Legend of Zelda, The - Oracle of Seasons (U) [C][!].gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 64
+; ROM "Legend of Zelda, The - Oracle of Seasons (U) [C][!].gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $ff97
-.DEFINE game_uses_save_ram 1
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $ff97
+DEF game_uses_save_ram EQU 1
+DEF uses_mbc5 EQU 1
 
 
 ; joypad
-.DEFINE joypad $c481
-.DEFINE joypad_2 $c480
-.DEFINE joypad_3 $c482
+DEF joypad EQU $c481
+DEF joypad_2 EQU $c480
+DEF joypad_3 EQU $c482
 
-.BANK $0000 SLOT 0
-.ORG $3ef8
-.SECTION "relocated read from joypad" SIZE $003b OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$3ef8] ; length: $003b
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $0290
-.SECTION "joypad read" SIZE 3 OVERWRITE
+SECTION "joypad read", ROM0[$0290] ; length: 3
     call relocated_read_from_joypad
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0006 SLOT 1
-.ORG $3a32
-.SECTION "save/load state" SIZE $0315 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7A32], BANK[$0006] ; length: $0315
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

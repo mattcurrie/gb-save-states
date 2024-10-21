@@ -1,41 +1,35 @@
 ; md5 982ed5d2b12a0377eb14bcdc4123744e
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 4
-.BACKGROUND "Tetris (W) (V1.1) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 4
+; ROM "Tetris (W) (V1.1) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff80
-.DEFINE joypad_2 $ff81
-.DEFINE current_rom_bank $0087   ; value at this address is $01
-.DEFINE current_nr34_value $dfba
+DEF joypad EQU $ff80
+DEF joypad_2 EQU $ff81
+DEF current_rom_bank EQU $0087   ; value at this address is EQU $01
+DEF current_nr34_value EQU $dfba
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $29a6
-.SECTION "joypad read" SIZE $3c OVERWRITE   
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$29a6] ; length: $3c
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $02 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $4000 OVERWRITE
-    .DB "--- Tetris Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$02] ; length: $4000
+    DB "--- Tetris Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

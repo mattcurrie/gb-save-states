@@ -8,31 +8,31 @@
 ;***************************************************************************
 
     ld a,$20                    
-    ld ($ff00+$00),a            
-    ld a,($ff00+$00)
-    ld a,($ff00+$00)
+    ldh [$ff00+$00],a            
+    ldh a,[$ff00+$00]
+    ldh a,[$ff00+$00]
     cpl              
     and $0f          
     swap a           
     ld b,a           
     ld a,$10         
-    ld ($ff00+$00),a 
-    ld a,($ff00+$00)
-    ld a,($ff00+$00)
-    ld a,($ff00+$00)
-    ld a,($ff00+$00)
-    ld a,($ff00+$00)
-    ld a,($ff00+$00)
+    ldh [$ff00+$00],a 
+    ldh a,[$ff00+$00]
+    ldh a,[$ff00+$00]
+    ldh a,[$ff00+$00]
+    ldh a,[$ff00+$00]
+    ldh a,[$ff00+$00]
+    ldh a,[$ff00+$00]
     cpl              
     and $0f          
     or b             
 
-.IFDEF swap_joypad
+IF DEF(swap_joypad)
     swap a
-.ENDIF
-.IFDEF cpl_joypad
+ENDC
+IF DEF(cpl_joypad)
     cpl
-.ENDIF
+ENDC
 
 
     ld c,a

@@ -1,50 +1,42 @@
 ; md5 acac255e33082dde52eee7af941d8681
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "R-Type II (Japan).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "R-Type II (Japan).gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $d006
-.DEFINE joypad_2 $d007
-.DEFINE current_rom_bank $d093
+DEF joypad EQU $d006
+DEF joypad_2 EQU $d007
+DEF current_rom_bank EQU $d093
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $3d20
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE   
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
+SECTION "relocated read from joypad", ROM0[$3d20] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
     ret
-.ENDS
+ENDSECTION
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $637
-.SECTION "joypad read" SIZE 3 OVERWRITE   
+SECTION "joypad read", ROM0[$637] ; length: 3
     call relocated_read_from_joypad
     ;nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $00 SLOT 0
-.ORG $3d80
-.SECTION "save/load state" SIZE $0220 OVERWRITE
-    .DB "--- XXXXX Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROM0[$3d80] ; length: $0220
+    DB "--- XXXXX Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

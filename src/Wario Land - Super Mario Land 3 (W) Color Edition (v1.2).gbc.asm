@@ -1,38 +1,32 @@
 ; md5 ee6bcaa3ff5b992bac378591a02b2e6f
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 64
-.BACKGROUND "Wario Land - Super Mario Land 3 (W) Color Edition (v1.2).gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 64
+; ROM "Wario Land - Super Mario Land 3 (W) Color Edition (v1.2).gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $a8c5
-.DEFINE game_uses_save_ram 1
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $a8c5
+DEF game_uses_save_ram EQU 1
+DEF uses_mbc5 EQU 1
 
 
 ; joypad
-.DEFINE joypad $ff80
-.DEFINE joypad_2 $ff81
+DEF joypad EQU $ff80
+DEF joypad_2 EQU $ff81
 
-.BANK $0000 SLOT 0
-.ORG $11f0
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$11f0] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0011 SLOT 1
-.ORG $1c01
-.SECTION "save/load state" SIZE $0315 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$5C01], BANK[$0011] ; length: $0315
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

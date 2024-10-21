@@ -1,43 +1,36 @@
 ; md5 7351daa3c0a91d8f6fe2fbcca6182478
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 64
-.BACKGROUND "Legend of Zelda, The - Link's Awakening DX (U) (V1.2) [C][!].gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 64
+; ROM "Legend of Zelda, The - Link's Awakening DX (U) (V1.2) [C][!].gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $dbaf
-.DEFINE game_uses_save_ram 1
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $dbaf
+DEF game_uses_save_ram EQU 1
+DEF uses_mbc5 EQU 1
 
 
 ; joypad
-.DEFINE joypad $ffcb
-.DEFINE joypad_2 $ffcc
-.DEFINE swap_joypad 1
+DEF joypad EQU $ffcb
+DEF joypad_2 EQU $ffcc
+DEF swap_joypad EQU 1
 
-.BANK $0000 SLOT 0
-.ORG $0006  ; note: manually changed to skip rom debug tool bytes at $0003-$0005
-.SECTION "relocated read from joypad" SIZE $003a OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0006]  ; note: manually changed to skip rom debug tool bytes at $0003-$0005 ; length: $003a
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $2879
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$2879] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0002 SLOT 1
-.ORG $3cf5
-.SECTION "save/load state" SIZE $0295 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7CF5], BANK[$0002] ; length: $0295
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

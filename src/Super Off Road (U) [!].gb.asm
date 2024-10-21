@@ -1,50 +1,42 @@
 ; md5 85d05f95c07ed1b7d787062fe4d2e251
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Super Off Road (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Super Off Road (U) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $c70b
+DEF joypad EQU $c70b
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0150
-.BANK $00 SLOT 0
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+DEF RESET_RAM_DONE EQU $0150
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $2c21
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+SECTION "joypad read", ROM0[$2c21] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $00 SLOT 0
-.ORG $3b00
-.SECTION "save/load state" SIZE $4fd OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-    .INCLUDE "includes/reset_ram.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROM0[$3b00] ; length: $4fd
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+    INCLUDE "includes/reset_ram.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

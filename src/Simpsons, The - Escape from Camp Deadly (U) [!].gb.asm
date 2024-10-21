@@ -1,50 +1,42 @@
 ; md5 e731fa23d9cd0c3d4dec7d5565beef61
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Simpsons, The - Escape from Camp Deadly (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Simpsons, The - Escape from Camp Deadly (U) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff8c
-.DEFINE current_rom_bank $c698
-.DEFINE restore_sound 1
+DEF joypad EQU $ff8c
+DEF current_rom_bank EQU $c698
+DEF restore_sound EQU 1
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $00A0
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$00A0] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $0cfa
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+SECTION "joypad read", ROM0[$0cfa] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $01 SLOT 1
-.ORG $3940
-.SECTION "save/load state" SIZE $480 OVERWRITE
-    .DB "--- The Simpsons - Escape From Camp Deadly Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7940], BANK[$01] ; length: $480
+    DB "--- The Simpsons - Escape From Camp Deadly Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

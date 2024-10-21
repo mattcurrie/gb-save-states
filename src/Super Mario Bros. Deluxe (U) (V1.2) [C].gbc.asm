@@ -1,42 +1,35 @@
 ; md5 b5a71128227f5bc953fd55cb0025807f
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 64
-.BACKGROUND "Super Mario Bros. Deluxe (U) (V1.2) [C].gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 64
+; ROM "Super Mario Bros. Deluxe (U) (V1.2) [C].gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $ffbe
-.DEFINE game_uses_save_ram 1
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $ffbe
+DEF game_uses_save_ram EQU 1
+DEF uses_mbc5 EQU 1
 
 
 ; joypad
-.DEFINE joypad $ff8b
-.DEFINE joypad_2 $ff8c
+DEF joypad EQU $ff8b
+DEF joypad_2 EQU $ff8c
 
-.BANK $0000 SLOT 0
-.ORG $0062
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$0062] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.ORG $120d
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$120d] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0003 SLOT 1
-.ORG $39d1
-.SECTION "save/load state" SIZE $0295 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$79D1], BANK[$0003] ; length: $0295
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

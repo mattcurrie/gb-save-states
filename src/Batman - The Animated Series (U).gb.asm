@@ -1,38 +1,32 @@
 ; md5 ae073c63ff7d151dc2dd406830fbbdc2
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Batman - The Animated Series (U).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Batman - The Animated Series (U).gb"
 
 
 ; config
-.DEFINE current_rom_bank $ffa3
+DEF current_rom_bank EQU $ffa3
 
 
 ; joypad
-.DEFINE joypad $ffa4
-.DEFINE joypad_2 $ffa6
-.DEFINE joypad_3 $ffa5
-.DEFINE joypad_4 $ffa7
-.DEFINE swap_joypad 1
+DEF joypad EQU $ffa4
+DEF joypad_2 EQU $ffa6
+DEF joypad_3 EQU $ffa5
+DEF joypad_4 EQU $ffa7
+DEF swap_joypad EQU 1
 
-.BANK $0000 SLOT 0
-.ORG $0843
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$0843] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     jp $087d
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0008 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$0008] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

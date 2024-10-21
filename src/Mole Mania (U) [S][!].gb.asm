@@ -1,65 +1,55 @@
 ; md5 f28ade3926852a8ad2e449c274683956
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 32
-.BACKGROUND "Mole Mania (U) [S][!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 32
+; ROM "Mole Mania (U) [S][!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff8a
-.DEFINE joypad_2 $ff8b
-.DEFINE current_rom_bank $ff8c
-.DEFINE game_uses_save_ram 1
-.DEFINE restore_wave_ram 1
+DEF joypad EQU $ff8a
+DEF joypad_2 EQU $ff8b
+DEF current_rom_bank EQU $ff8c
+DEF game_uses_save_ram EQU 1
+DEF restore_wave_ram EQU 1
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $00a0
-.SECTION "relocated read from joypad" SIZE $60 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$00a0] ; length: $60
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
 
 ;*************
 ;* reset ram *
 ;*************
 
-.DEFINE RESET_RAM_DONE $0150
-.BANK $00 SLOT 0
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+DEF RESET_RAM_DONE EQU $0150
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $01e2
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+SECTION "joypad read", ROM0[$01e2] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $02 SLOT 1
-.ORG $3a00
-.SECTION "save/load state" SIZE $600 OVERWRITE
-    .DB "--- Mole Mania Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7A00], BANK[$02] ; length: $600
+    DB "--- Mole Mania Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

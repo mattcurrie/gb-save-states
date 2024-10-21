@@ -1,39 +1,32 @@
 ; md5 825de040ea4dff66661693f8712b1bdb
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 128
-.BACKGROUND "Legend of Zelda, The - Oracle of Ages (E) (M5) [C][!].gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 128
+; ROM "Legend of Zelda, The - Oracle of Ages (E) (M5) [C][!].gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $ffd8
-.DEFINE game_uses_save_ram 1
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $ffd8
+DEF game_uses_save_ram EQU 1
+DEF uses_mbc5 EQU 1
 
 
 ; joypad
-.DEFINE joypad $c481
-.DEFINE joypad_2 $c480
-.DEFINE joypad_3 $c482
+DEF joypad EQU $c481
+DEF joypad_2 EQU $c480
+DEF joypad_3 EQU $c482
 
-.BANK $0000 SLOT 0
-.ORG $3ef8
-.SECTION "relocated read from joypad" SIZE $003b OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
-    
-.ORG $0290
-.SECTION "joypad read" SIZE 3 OVERWRITE
+SECTION "relocated read from joypad", ROM0[$3ef8] ; length: $003b
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
+
+SECTION "joypad read", ROM0[$0290] ; length: 3
     call relocated_read_from_joypad
-.ENDS
-    
+ENDSECTION
+
 
 ; save/load state
-.BANK $0001 SLOT 1
-.ORG $3000
-.SECTION "save/load state" SIZE $0315 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7000], BANK[$0001] ; length: $0315
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

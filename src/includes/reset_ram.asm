@@ -14,7 +14,7 @@ RESET_RAM:
     ld a,$ff
 
 RESET_RAM_LOOP:   
-    ld  (hl+),a
+    ld  [hl+],a
     bit 5,h       ; bit 5 will be set when value of h register is $e0
 
     jr z,RESET_RAM_LOOP

@@ -1,39 +1,33 @@
 ; md5 64080619789f154ee057f2946a98c61c
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Miracle Adventure of Esparks (Japan).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Miracle Adventure of Esparks (Japan).gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $fffa
-.DEFINE joypad_2 $fffb
-.DEFINE current_rom_bank $ffc7
+DEF joypad EQU $fffa
+DEF joypad_2 EQU $fffb
+DEF current_rom_bank EQU $ffc7
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $0000 SLOT 0
-.ORG $5
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$5] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $08 SLOT 1
-.ORG $0
-.SECTION "save/load state" SIZE $0255 OVERWRITE
-    .DB "--- XXXXX Save Patch ---"
-	.INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$08] ; length: $0255
+    DB "--- XXXXX Save Patch ---"
+	INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

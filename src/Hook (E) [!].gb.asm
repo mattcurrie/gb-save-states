@@ -1,61 +1,51 @@
 ; md5 b3e011cde1fa6b5bebcac15ac970c4a9
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Hook (E) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Hook (E) [!].gb"
 
 
 ; config
-.DEFINE current_rom_bank $c08d
+DEF current_rom_bank EQU $c08d
 
 
-; reset ram 
-.DEFINE RESET_RAM_DONE $0150
-.BANK $0000 SLOT 0
+; reset ram
+DEF RESET_RAM_DONE EQU $0150
 
-.ORG $0070
-.SECTION "reset ram" SIZE $F OVERWRITE
-    .INCLUDE "includes/reset_ram.asm"
-.ENDS
+SECTION "reset ram", ROM0[$0070] ; length: $F
+    INCLUDE "includes/reset_ram.asm"
+ENDSECTION
 
-.ORG $0101
-.SECTION "reset ram jump" SIZE 3 OVERWRITE
+SECTION "reset ram jump", ROM0[$0101] ; length: 3
     jp RESET_RAM
-.ENDS
+ENDSECTION
 
 
 ; joypad
-.DEFINE joypad $ffb0
-.DEFINE swap_joypad 1
+DEF joypad EQU $ffb0
+DEF swap_joypad EQU 1
 
-.BANK $0000 SLOT 0
-.ORG $02d2
-.SECTION "joypad read" SIZE 4 OVERWRITE
+SECTION "joypad read", ROM0[$02d2] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
-.ORG $0000
-.SECTION "relocated read from joypad" SIZE $003d OVERWRITE
+SECTION "relocated read from joypad", ROM0[$0000] ; length: $003d
 relocated_read_from_joypad:
     ld a,$30
-    ld ($ff00+$00),a
+    ld [$ff00+$00],a
 
     ld a, b
-    ld ($ff00+$b0), a
-    .INCLUDE "includes/joypad_check.asm"
-    ld a, ($ff00+$b0)
+    ld [$ff00+$b0], a
+    INCLUDE "includes/joypad_check.asm"
+    ld a, [$ff00+$b0]
     ld b, a
 
     ret
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0008 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $0220 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$0008] ; length: $0220
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

@@ -26,25 +26,25 @@ PACKBITS_ENCODE:
 
     ; store output address in PACKBITS_CURRENT_OUTPUT_ADDRESS
     ld a,e
-    ld (PACKBITS_CURRENT_OUTPUT_ADDRESS),a
+    ld [PACKBITS_CURRENT_OUTPUT_ADDRESS],a
     ld a,d
-    ld (PACKBITS_CURRENT_OUTPUT_ADDRESS + 1),a
+    ld [PACKBITS_CURRENT_OUTPUT_ADDRESS + 1],a
     
     ; calculate the end of the input address and store 
     ; in DE and PACKBITS_INPUT_END_ADDRESS
     ld a,c
     add l
     ld e,a
-    ld (PACKBITS_INPUT_END_ADDRESS),a
+    ld [PACKBITS_INPUT_END_ADDRESS],a
 
     ld a,b
     adc h
     ld d,a
-    ld (PACKBITS_INPUT_END_ADDRESS + 1),a
+    ld [PACKBITS_INPUT_END_ADDRESS + 1],a
 
 
     ; initialisation
-    ld a,(hl)
+    ld a,[hl]
     ld b,a  ; initialise previous byte with first byte
     ld c,0  ; counter
 
@@ -74,7 +74,7 @@ PACKBITS_ENCODE_CONTINUE:
 
     ; check if byte at HL equals the previous character. 
     ; if not, then we need to write some output
-    ld a,(hl)
+    ld a,[hl]
     cp b    
     jr nz,PACKBITS_ENCODE_OUTPUT
 
@@ -112,8 +112,8 @@ PACKBITS_ENCODE_COMPRESSED_OUTPUT:
 
     ; load the current output address into HL
     ld hl,PACKBITS_CURRENT_OUTPUT_ADDRESS
-    ld a,(hl+)
-    ld h,(hl)
+    ld a,[hl+]
+    ld h,[hl]
     ld l,a
 
 
@@ -127,18 +127,18 @@ PACKBITS_ENCODE_COMPRESSED_OUTPUT:
 
 
     ; write the counter value
-    ld (hl+),a   
+    ld [hl+],a   
 
     ; write the repeated byte value
     ld a,b
-    ld (hl+),a 
+    ld [hl+],a 
 
 
     ; update the current output address
     ld a,l
-    ld (PACKBITS_CURRENT_OUTPUT_ADDRESS),a
+    ld [PACKBITS_CURRENT_OUTPUT_ADDRESS],a
     ld a,h
-    ld (PACKBITS_CURRENT_OUTPUT_ADDRESS + 1),a
+    ld [PACKBITS_CURRENT_OUTPUT_ADDRESS + 1],a
 
 
     ; restore the source data read address into HL
@@ -149,11 +149,11 @@ PACKBITS_ENCODE_COMPRESSED_OUTPUT:
 
 
 
-.INCLUDE "includes/packbits_generate_literal.asm"
+INCLUDE "includes/packbits_generate_literal.asm"
 
 
 PACKBITS_ENCODE_RESET_COUNTER:
-    ld a,(hl)
+    ld a,[hl]
     ld b,a
 
     ld c,0
@@ -172,8 +172,8 @@ PACKBITS_ENCODE_END:
 
     ; read the current output address into HL
     ld hl,PACKBITS_CURRENT_OUTPUT_ADDRESS
-    ld a,(hl+)
-    ld h,(hl)
+    ld a,[hl+]
+    ld h,[hl]
     ld l,a
 
 
@@ -191,10 +191,10 @@ PACKBITS_ENCODE_END:
     cpl
     inc a        
 
-    ld (hl+),a   ; write the counter
+    ld [hl+],a   ; write the counter
 
     ld a,b
-    ld (hl+),a   ; write the byte
+    ld [hl+],a   ; write the byte
 
 
 PACKBITS_ENCODE_SKIP_FINAL_RUN:

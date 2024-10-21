@@ -1,49 +1,41 @@
 ; md5 7d776329212fa7cc2b00c5a46f06dd92
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Darkwing Duck (U) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Darkwing Duck (U) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $ff92
-.DEFINE joypad_2 $ff93
-.DEFINE current_rom_bank $ff98
+DEF joypad EQU $ff92
+DEF joypad_2 EQU $ff93
+DEF current_rom_bank EQU $ff98
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $00C0
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$00C0] ; length: $40
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $00 SLOT 0
-.ORG $0381
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+SECTION "joypad read", ROM0[$0381] ; length: 4
     call relocated_read_from_joypad
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $08 SLOT 1
-.ORG $0
-.SECTION "save/load state" SIZE $4000 OVERWRITE
-    .DB "--- Darkwing Duck Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$08] ; length: $4000
+    DB "--- Darkwing Duck Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION

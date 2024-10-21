@@ -1,37 +1,31 @@
 ; md5 10d92861e262069ce31559e12b927aa0
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Cave Noire (J).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Cave Noire (J).gb"
 
 
 ; config
-.DEFINE current_rom_bank $c024
-.DEFINE game_uses_save_ram 1
+DEF current_rom_bank EQU $c024
+DEF game_uses_save_ram EQU 1
 
 
 ; joypad
-.DEFINE joypad $c00e
-.DEFINE joypad_2 $c00f
-.DEFINE swap_joypad 1
+DEF joypad EQU $c00e
+DEF joypad_2 EQU $c00f
+DEF swap_joypad EQU 1
 
-.BANK $0000 SLOT 0
-.ORG $02a1
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$02a1] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ; save/load state
-.BANK $0008 SLOT 1
-.ORG $0000
-.SECTION "save/load state" SIZE $02c5 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$0008] ; length: $02c5
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py

@@ -1,31 +1,25 @@
 ; md5 20052c527795a4f332be14aff49d4d4b
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 64
-.BACKGROUND "Smurfs Nightmare, The (U) [C][!].gbc"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 64
+; ROM "Smurfs Nightmare, The (U) [C][!].gbc"
 
 
 ; config
-.DEFINE is_cgb 1
-.DEFINE current_rom_bank $7fff
-.DEFINE uses_mbc5 1
+DEF is_cgb EQU 1
+DEF current_rom_bank EQU $7fff
+DEF uses_mbc5 EQU 1
 
 
 ; joypad
-.DEFINE joypad $fff5
-.DEFINE joypad_2 $fff6
+DEF joypad EQU $fff5
+DEF joypad_2 EQU $fff6
 
-.BANK $0000 SLOT 0
-.ORG $3f00
-.SECTION "relocated read from joypad" SIZE $40 OVERWRITE
-    .DEFINE interrupts_already_disabled 1
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-.ENDS
+SECTION "relocated read from joypad", ROM0[$3f00] ; length: $40
+    DEF interrupts_already_disabled EQU 1
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+ENDSECTION
 
-.BANK 7
-.ORG $3fe7
-.SECTION "joypad read" SIZE 14 OVERWRITE
+SECTION "joypad read", ROMX[$7fe7], BANK[$7] ; length: 14
     ldh a, [$f5]
     xor b
     and b
@@ -34,397 +28,269 @@
     ldh [$f5], a
     call relocated_read_from_joypad
     ret
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0010 SLOT 1
-.ORG $0001
-.SECTION "save/load state" SIZE $02e0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4001], BANK[$0010] ; length: $02e0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
-.BANK $01 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-01" SIZE 1 OVERWRITE
-    .DB $01
-.ENDS
+SECTION "bank-number-01", ROMX[$7FFF], BANK[$01] ; length: 1
+    DB $01
+ENDSECTION
 
-.BANK $02 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-02" SIZE 1 OVERWRITE
-    .DB $02
-.ENDS
+SECTION "bank-number-02", ROMX[$7FFF], BANK[$02] ; length: 1
+    DB $02
+ENDSECTION
 
-.BANK $03 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-03" SIZE 1 OVERWRITE
-    .DB $03
-.ENDS
+SECTION "bank-number-03", ROMX[$7FFF], BANK[$03] ; length: 1
+    DB $03
+ENDSECTION
 
-.BANK $04 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-04" SIZE 1 OVERWRITE
-    .DB $04
-.ENDS
+SECTION "bank-number-04", ROMX[$7FFF], BANK[$04] ; length: 1
+    DB $04
+ENDSECTION
 
-.BANK $05 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-05" SIZE 1 OVERWRITE
-    .DB $05
-.ENDS
+SECTION "bank-number-05", ROMX[$7FFF], BANK[$05] ; length: 1
+    DB $05
+ENDSECTION
 
-.BANK $06 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-06" SIZE 1 OVERWRITE
-    .DB $06
-.ENDS
+SECTION "bank-number-06", ROMX[$7FFF], BANK[$06] ; length: 1
+    DB $06
+ENDSECTION
 
-.BANK $07 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-07" SIZE 1 OVERWRITE
-    .DB $07
-.ENDS
+SECTION "bank-number-07", ROMX[$7FFF], BANK[$07] ; length: 1
+    DB $07
+ENDSECTION
 
-.BANK $08 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-08" SIZE 1 OVERWRITE
-    .DB $08
-.ENDS
+SECTION "bank-number-08", ROMX[$7FFF], BANK[$08] ; length: 1
+    DB $08
+ENDSECTION
 
-.BANK $09 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-09" SIZE 1 OVERWRITE
-    .DB $09
-.ENDS
+SECTION "bank-number-09", ROMX[$7FFF], BANK[$09] ; length: 1
+    DB $09
+ENDSECTION
 
-.BANK $0a SLOT 1
-.ORG $3fff
-.SECTION "bank-number-0a" SIZE 1 OVERWRITE
-    .DB $0a
-.ENDS
+SECTION "bank-number-0a", ROMX[$7FFF], BANK[$0a] ; length: 1
+    DB $0a
+ENDSECTION
 
-.BANK $0b SLOT 1
-.ORG $3fff
-.SECTION "bank-number-0b" SIZE 1 OVERWRITE
-    .DB $0b
-.ENDS
+SECTION "bank-number-0b", ROMX[$7FFF], BANK[$0b] ; length: 1
+    DB $0b
+ENDSECTION
 
-.BANK $0c SLOT 1
-.ORG $3fff
-.SECTION "bank-number-0c" SIZE 1 OVERWRITE
-    .DB $0c
-.ENDS
+SECTION "bank-number-0c", ROMX[$7FFF], BANK[$0c] ; length: 1
+    DB $0c
+ENDSECTION
 
-.BANK $0d SLOT 1
-.ORG $3fff
-.SECTION "bank-number-0d" SIZE 1 OVERWRITE
-    .DB $0d
-.ENDS
+SECTION "bank-number-0d", ROMX[$7FFF], BANK[$0d] ; length: 1
+    DB $0d
+ENDSECTION
 
-.BANK $0e SLOT 1
-.ORG $3fff
-.SECTION "bank-number-0e" SIZE 1 OVERWRITE
-    .DB $0e
-.ENDS
+SECTION "bank-number-0e", ROMX[$7FFF], BANK[$0e] ; length: 1
+    DB $0e
+ENDSECTION
 
-.BANK $0f SLOT 1
-.ORG $3fff
-.SECTION "bank-number-0f" SIZE 1 OVERWRITE
-    .DB $0f
-.ENDS
+SECTION "bank-number-0f", ROMX[$7FFF], BANK[$0f] ; length: 1
+    DB $0f
+ENDSECTION
 
-.BANK $10 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-10" SIZE 1 OVERWRITE
-    .DB $10
-.ENDS
+SECTION "bank-number-10", ROMX[$7FFF], BANK[$10] ; length: 1
+    DB $10
+ENDSECTION
 
-.BANK $11 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-11" SIZE 1 OVERWRITE
-    .DB $11
-.ENDS
+SECTION "bank-number-11", ROMX[$7FFF], BANK[$11] ; length: 1
+    DB $11
+ENDSECTION
 
-.BANK $12 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-12" SIZE 1 OVERWRITE
-    .DB $12
-.ENDS
+SECTION "bank-number-12", ROMX[$7FFF], BANK[$12] ; length: 1
+    DB $12
+ENDSECTION
 
-.BANK $13 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-13" SIZE 1 OVERWRITE
-    .DB $13
-.ENDS
+SECTION "bank-number-13", ROMX[$7FFF], BANK[$13] ; length: 1
+    DB $13
+ENDSECTION
 
-.BANK $14 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-14" SIZE 1 OVERWRITE
-    .DB $14
-.ENDS
+SECTION "bank-number-14", ROMX[$7FFF], BANK[$14] ; length: 1
+    DB $14
+ENDSECTION
 
-.BANK $15 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-15" SIZE 1 OVERWRITE
-    .DB $15
-.ENDS
+SECTION "bank-number-15", ROMX[$7FFF], BANK[$15] ; length: 1
+    DB $15
+ENDSECTION
 
-.BANK $16 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-16" SIZE 1 OVERWRITE
-    .DB $16
-.ENDS
+SECTION "bank-number-16", ROMX[$7FFF], BANK[$16] ; length: 1
+    DB $16
+ENDSECTION
 
-.BANK $17 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-17" SIZE 1 OVERWRITE
-    .DB $17
-.ENDS
+SECTION "bank-number-17", ROMX[$7FFF], BANK[$17] ; length: 1
+    DB $17
+ENDSECTION
 
-.BANK $18 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-18" SIZE 1 OVERWRITE
-    .DB $18
-.ENDS
+SECTION "bank-number-18", ROMX[$7FFF], BANK[$18] ; length: 1
+    DB $18
+ENDSECTION
 
-.BANK $19 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-19" SIZE 1 OVERWRITE
-    .DB $19
-.ENDS
+SECTION "bank-number-19", ROMX[$7FFF], BANK[$19] ; length: 1
+    DB $19
+ENDSECTION
 
-.BANK $1a SLOT 1
-.ORG $3fff
-.SECTION "bank-number-1a" SIZE 1 OVERWRITE
-    .DB $1a
-.ENDS
+SECTION "bank-number-1a", ROMX[$7FFF], BANK[$1a] ; length: 1
+    DB $1a
+ENDSECTION
 
-.BANK $1b SLOT 1
-.ORG $3fff
-.SECTION "bank-number-1b" SIZE 1 OVERWRITE
-    .DB $1b
-.ENDS
+SECTION "bank-number-1b", ROMX[$7FFF], BANK[$1b] ; length: 1
+    DB $1b
+ENDSECTION
 
-.BANK $1c SLOT 1
-.ORG $3fff
-.SECTION "bank-number-1c" SIZE 1 OVERWRITE
-    .DB $1c
-.ENDS
+SECTION "bank-number-1c", ROMX[$7FFF], BANK[$1c] ; length: 1
+    DB $1c
+ENDSECTION
 
-.BANK $1d SLOT 1
-.ORG $3fff
-.SECTION "bank-number-1d" SIZE 1 OVERWRITE
-    .DB $1d
-.ENDS
+SECTION "bank-number-1d", ROMX[$7FFF], BANK[$1d] ; length: 1
+    DB $1d
+ENDSECTION
 
-.BANK $1e SLOT 1
-.ORG $3fff
-.SECTION "bank-number-1e" SIZE 1 OVERWRITE
-    .DB $1e
-.ENDS
+SECTION "bank-number-1e", ROMX[$7FFF], BANK[$1e] ; length: 1
+    DB $1e
+ENDSECTION
 
-.BANK $1f SLOT 1
-.ORG $3fff
-.SECTION "bank-number-1f" SIZE 1 OVERWRITE
-    .DB $1f
-.ENDS
+SECTION "bank-number-1f", ROMX[$7FFF], BANK[$1f] ; length: 1
+    DB $1f
+ENDSECTION
 
-.BANK $20 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-20" SIZE 1 OVERWRITE
-    .DB $20
-.ENDS
+SECTION "bank-number-20", ROMX[$7FFF], BANK[$20] ; length: 1
+    DB $20
+ENDSECTION
 
-.BANK $21 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-21" SIZE 1 OVERWRITE
-    .DB $21
-.ENDS
+SECTION "bank-number-21", ROMX[$7FFF], BANK[$21] ; length: 1
+    DB $21
+ENDSECTION
 
-.BANK $22 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-22" SIZE 1 OVERWRITE
-    .DB $22
-.ENDS
+SECTION "bank-number-22", ROMX[$7FFF], BANK[$22] ; length: 1
+    DB $22
+ENDSECTION
 
-.BANK $23 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-23" SIZE 1 OVERWRITE
-    .DB $23
-.ENDS
+SECTION "bank-number-23", ROMX[$7FFF], BANK[$23] ; length: 1
+    DB $23
+ENDSECTION
 
-.BANK $24 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-24" SIZE 1 OVERWRITE
-    .DB $24
-.ENDS
+SECTION "bank-number-24", ROMX[$7FFF], BANK[$24] ; length: 1
+    DB $24
+ENDSECTION
 
-.BANK $25 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-25" SIZE 1 OVERWRITE
-    .DB $25
-.ENDS
+SECTION "bank-number-25", ROMX[$7FFF], BANK[$25] ; length: 1
+    DB $25
+ENDSECTION
 
-.BANK $26 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-26" SIZE 1 OVERWRITE
-    .DB $26
-.ENDS
+SECTION "bank-number-26", ROMX[$7FFF], BANK[$26] ; length: 1
+    DB $26
+ENDSECTION
 
-.BANK $27 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-27" SIZE 1 OVERWRITE
-    .DB $27
-.ENDS
+SECTION "bank-number-27", ROMX[$7FFF], BANK[$27] ; length: 1
+    DB $27
+ENDSECTION
 
-.BANK $28 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-28" SIZE 1 OVERWRITE
-    .DB $28
-.ENDS
+SECTION "bank-number-28", ROMX[$7FFF], BANK[$28] ; length: 1
+    DB $28
+ENDSECTION
 
-.BANK $29 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-29" SIZE 1 OVERWRITE
-    .DB $29
-.ENDS
+SECTION "bank-number-29", ROMX[$7FFF], BANK[$29] ; length: 1
+    DB $29
+ENDSECTION
 
-.BANK $2a SLOT 1
-.ORG $3fff
-.SECTION "bank-number-2a" SIZE 1 OVERWRITE
-    .DB $2a
-.ENDS
+SECTION "bank-number-2a", ROMX[$7FFF], BANK[$2a] ; length: 1
+    DB $2a
+ENDSECTION
 
-.BANK $2b SLOT 1
-.ORG $3fff
-.SECTION "bank-number-2b" SIZE 1 OVERWRITE
-    .DB $2b
-.ENDS
+SECTION "bank-number-2b", ROMX[$7FFF], BANK[$2b] ; length: 1
+    DB $2b
+ENDSECTION
 
-.BANK $2c SLOT 1
-.ORG $3fff
-.SECTION "bank-number-2c" SIZE 1 OVERWRITE
-    .DB $2c
-.ENDS
+SECTION "bank-number-2c", ROMX[$7FFF], BANK[$2c] ; length: 1
+    DB $2c
+ENDSECTION
 
-.BANK $2d SLOT 1
-.ORG $3fff
-.SECTION "bank-number-2d" SIZE 1 OVERWRITE
-    .DB $2d
-.ENDS
+SECTION "bank-number-2d", ROMX[$7FFF], BANK[$2d] ; length: 1
+    DB $2d
+ENDSECTION
 
-.BANK $2e SLOT 1
-.ORG $3fff
-.SECTION "bank-number-2e" SIZE 1 OVERWRITE
-    .DB $2e
-.ENDS
+SECTION "bank-number-2e", ROMX[$7FFF], BANK[$2e] ; length: 1
+    DB $2e
+ENDSECTION
 
-.BANK $2f SLOT 1
-.ORG $3fff
-.SECTION "bank-number-2f" SIZE 1 OVERWRITE
-    .DB $2f
-.ENDS
+SECTION "bank-number-2f", ROMX[$7FFF], BANK[$2f] ; length: 1
+    DB $2f
+ENDSECTION
 
-.BANK $30 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-30" SIZE 1 OVERWRITE
-    .DB $30
-.ENDS
+SECTION "bank-number-30", ROMX[$7FFF], BANK[$30] ; length: 1
+    DB $30
+ENDSECTION
 
-.BANK $31 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-31" SIZE 1 OVERWRITE
-    .DB $31
-.ENDS
+SECTION "bank-number-31", ROMX[$7FFF], BANK[$31] ; length: 1
+    DB $31
+ENDSECTION
 
-.BANK $32 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-32" SIZE 1 OVERWRITE
-    .DB $32
-.ENDS
+SECTION "bank-number-32", ROMX[$7FFF], BANK[$32] ; length: 1
+    DB $32
+ENDSECTION
 
-.BANK $33 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-33" SIZE 1 OVERWRITE
-    .DB $33
-.ENDS
+SECTION "bank-number-33", ROMX[$7FFF], BANK[$33] ; length: 1
+    DB $33
+ENDSECTION
 
-.BANK $34 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-34" SIZE 1 OVERWRITE
-    .DB $34
-.ENDS
+SECTION "bank-number-34", ROMX[$7FFF], BANK[$34] ; length: 1
+    DB $34
+ENDSECTION
 
-.BANK $35 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-35" SIZE 1 OVERWRITE
-    .DB $35
-.ENDS
+SECTION "bank-number-35", ROMX[$7FFF], BANK[$35] ; length: 1
+    DB $35
+ENDSECTION
 
-.BANK $36 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-36" SIZE 1 OVERWRITE
-    .DB $36
-.ENDS
+SECTION "bank-number-36", ROMX[$7FFF], BANK[$36] ; length: 1
+    DB $36
+ENDSECTION
 
-.BANK $37 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-37" SIZE 1 OVERWRITE
-    .DB $37
-.ENDS
+SECTION "bank-number-37", ROMX[$7FFF], BANK[$37] ; length: 1
+    DB $37
+ENDSECTION
 
-.BANK $38 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-38" SIZE 1 OVERWRITE
-    .DB $38
-.ENDS
+SECTION "bank-number-38", ROMX[$7FFF], BANK[$38] ; length: 1
+    DB $38
+ENDSECTION
 
-.BANK $39 SLOT 1
-.ORG $3fff
-.SECTION "bank-number-39" SIZE 1 OVERWRITE
-    .DB $39
-.ENDS
+SECTION "bank-number-39", ROMX[$7FFF], BANK[$39] ; length: 1
+    DB $39
+ENDSECTION
 
-.BANK $3a SLOT 1
-.ORG $3fff
-.SECTION "bank-number-3a" SIZE 1 OVERWRITE
-    .DB $3a
-.ENDS
+SECTION "bank-number-3a", ROMX[$7FFF], BANK[$3a] ; length: 1
+    DB $3a
+ENDSECTION
 
-.BANK $3b SLOT 1
-.ORG $3fff
-.SECTION "bank-number-3b" SIZE 1 OVERWRITE
-    .DB $3b
-.ENDS
+SECTION "bank-number-3b", ROMX[$7FFF], BANK[$3b] ; length: 1
+    DB $3b
+ENDSECTION
 
-.BANK $3c SLOT 1
-.ORG $3fff
-.SECTION "bank-number-3c" SIZE 1 OVERWRITE
-    .DB $3c
-.ENDS
+SECTION "bank-number-3c", ROMX[$7FFF], BANK[$3c] ; length: 1
+    DB $3c
+ENDSECTION
 
-.BANK $3d SLOT 1
-.ORG $3fff
-.SECTION "bank-number-3d" SIZE 1 OVERWRITE
-    .DB $3d
-.ENDS
+SECTION "bank-number-3d", ROMX[$7FFF], BANK[$3d] ; length: 1
+    DB $3d
+ENDSECTION
 
-.BANK $3e SLOT 1
-.ORG $3fff
-.SECTION "bank-number-3e" SIZE 1 OVERWRITE
-    .DB $3e
-.ENDS
+SECTION "bank-number-3e", ROMX[$7FFF], BANK[$3e] ; length: 1
+    DB $3e
+ENDSECTION
 
-.BANK $3f SLOT 1
-.ORG $3fff
-.SECTION "bank-number-3f" SIZE 1 OVERWRITE
-    .DB $3f
-.ENDS
+SECTION "bank-number-3f", ROMX[$7FFF], BANK[$3f] ; length: 1
+    DB $3f
+ENDSECTION
 
 
 ; Generated with patch-builder.py

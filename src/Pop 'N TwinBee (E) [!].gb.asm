@@ -1,59 +1,50 @@
 ; md5 05d5cf3404868efc22ac06e22ab5ba89
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 16
-.BACKGROUND "Pop 'N TwinBee (E) [!].gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 16
+; ROM "Pop 'N TwinBee (E) [!].gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE joypad $d806
-.DEFINE joypad_2 $d807
-.DEFINE swap_joypad 1
-.DEFINE current_rom_bank $7fff
-.DEFINE restore_wave_ram 1
+DEF joypad EQU $d806
+DEF joypad_2 EQU $d807
+DEF swap_joypad EQU 1
+DEF current_rom_bank EQU $7fff
+DEF restore_wave_ram EQU 1
 
 
 ;*************************
 ;* relocated joypad read *
 ;*************************
 
-.BANK $00 SLOT 0
-.ORG $00b0
-.SECTION "call relocated read from joypad" SIZE $30 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "call relocated read from joypad", ROM0[$00b0] ; length: $30
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     ret
-.ENDS
+ENDSECTION
 
 
 ;***************
 ;* joypad read *
 ;***************
 
-.BANK $01 SLOT 1
-.ORG $3112
-.SECTION "joypad read" SIZE 4 OVERWRITE   
+SECTION "joypad read", ROMX[$7112], BANK[$01] ; length: 4
     call invoke_relocated_read_from_joypad_in_other_bank
     nop
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $08 SLOT 1
-.ORG $0
-.SECTION "save/load state" SIZE $4000 OVERWRITE
-    .DB "--- Pop'n TwinBee Save Patch ---"
-    .INCLUDE "includes/relocated_read_from_joypad.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$4000], BANK[$08] ; length: $4000
+    DB "--- Pop'n TwinBee Save Patch ---"
+    INCLUDE "includes/relocated_read_from_joypad.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
-.ORG $3fff
-.SECTION "bank 8" SIZE 1 OVERWRITE
-    .DB $8
-.ENDS
+SECTION "bank 8", ROMX[$7FFF], BANK[$08] ; length: 1
+    DB $8
+ENDSECTION

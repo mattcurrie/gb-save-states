@@ -1,44 +1,38 @@
 ; md5 ac04d143de6734e181a223d05178bde8
 
-.INCLUDE "includes/init.asm"
-.ROMBANKS 8
-.BACKGROUND "Ikari no Yousai (J).gb"
-.INCLUDE "includes/header.asm"
+; ROMBANKS 8
+; ROM "Ikari no Yousai (J).gb"
 
 
 ;**********
 ;* config *
 ;**********
 
-.DEFINE current_rom_bank $ffcc
+DEF current_rom_bank EQU $ffcc
 
 
 ;**********
 ;* joypad *
 ;**********
 
-.DEFINE joypad $ffd7
-.DEFINE joypad_2 $ffd8
+DEF joypad EQU $ffd7
+DEF joypad_2 EQU $ffd8
 
-.BANK $0000 SLOT 0
-.ORG $015b
-.SECTION "joypad read" SIZE $20 OVERWRITE
-    .INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
+SECTION "joypad read", ROM0[$015b] ; length: $20
+    INCLUDE "includes/call_relocated_read_from_joypad_in_other_bank.asm"
     jp $019b
-.ENDS
+ENDSECTION
 
 
 ;*******************
 ;* save/load state *
 ;*******************
 
-.BANK $0002 SLOT 1
-.ORG $3c2a
-.SECTION "save/load state" SIZE $02a0 OVERWRITE
-    .DB "--- Save Patch ---"
-    .INCLUDE "includes/joypad_read_and_check.asm"
-    .INCLUDE "includes/save_state_includes.asm"
-.ENDS
+SECTION "save/load state", ROMX[$7C2A], BANK[$0002] ; length: $02a0
+    DB "--- Save Patch ---"
+    INCLUDE "includes/joypad_read_and_check.asm"
+    INCLUDE "includes/save_state_includes.asm"
+ENDSECTION
 
 
 ; Generated with patch-builder.py
