@@ -11,3 +11,7 @@ ENDSECTION
 SECTION "ram size", ROM0[$0149]
     DB RAMSIZE
 ENDSECTION
+
+SECTION "checksums", ROM0[$014d]
+    DB $00, $00, $00    ; zero out to stop warning from rgbfix
+ENDSECTION
