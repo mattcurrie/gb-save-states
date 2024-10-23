@@ -1,0 +1,4 @@
+; header
+SECTION "ram size", ROM0[$0149]
+    DB RAMSIZE
+ENDSECTION
