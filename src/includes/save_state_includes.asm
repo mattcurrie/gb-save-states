@@ -1,3 +1,4 @@
+INCLUDE "includes/hardware.inc"
 INCLUDE "includes/defines.asm"
 PUSHS ; header gets it's own section
 INCLUDE "includes/header.asm"
