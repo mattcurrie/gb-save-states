@@ -79,7 +79,6 @@
     ld a, 1
     ldh [$4d], a
     stop
-    nop
 no_speed_toggle:
 
 
