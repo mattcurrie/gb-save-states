@@ -8,7 +8,6 @@
 ;* config *
 ;**********
 
-DEF is_cgb EQU 1
 DEF joypad EQU $d04f
 DEF joypad_2 EQU $ff00+$8b
 DEF current_rom_bank EQU $CF99
