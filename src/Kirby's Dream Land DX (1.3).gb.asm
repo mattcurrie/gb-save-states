@@ -50,6 +50,6 @@ ENDSECTION
 ;*******************
 
 SECTION "save/load state", ROMX[$7D00], BANK[$0f] ; length: $2e0
-    DB "--- Kirby's Dream Land Save Patch ---"
+    DB "--- Kirby's Dream Land DX Save Patch ---"
     INCLUDE "includes/save_state_includes.asm"
 ENDSECTION
