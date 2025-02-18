@@ -42,15 +42,15 @@ After pressing the button combo, the screen will flash as the save/load process 
 
 ### Save 
 
-Combo 1: Hold ```Down``` and press ```Start```
+Combo 1: Hold <kbd>Down</kbd> and press <kbd>Start</kbd>
 
-Combo 2: Hold ```Select``` and press ```A```
+Combo 2: Hold <kbd>Select</kbd> and press <kbd>A</kbd>
 
 ### Load
 
-Combo 1: Hold ```Up``` and press ```Start```
+Combo 1: Hold <kbd>Up</kbd> and press <kbd>Start</kbd>
 
-Combo 2: Hold ```Select``` and press ```B```
+Combo 2: Hold <kbd>Select</kbd> and press <kbd>B</kbd>
 
 # There isn't a patch for my favourite game!
 
@@ -64,4 +64,4 @@ If you have a bit of Game Boy assembly knowledge then you can create a patch you
 
 # Notes
 
-- Kirby's Dream Land uses `Select + Down + B` and `Select + Up + A` to access hidden features on the title screen. To avoid conflicts with the save/load combos, these hidden feature combos have been remapped to `Down + B` and `Up + A`.
+- Kirby's Dream Land uses <kbd>Select</kbd> + <kbd>Down</kbd> + <kbd>B</kbd> and <kbd>Select</kbd> + <kbd>Up</kbd> + <kbd>A</kbd> to access hidden features on the title screen. To avoid conflicts with the save/load combos, these hidden feature combos have been remapped to <kbd>Down</kbd> + <kbd>B</kbd> and <kbd>Up</kbd> + <kbd>A</kbd>.
